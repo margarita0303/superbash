@@ -1,5 +1,5 @@
 package io
 
-class ConsoleContentOutputPrinter: ContentOutputPrinter {
+class ConsoleContentOutput: ContentOutput {
     override fun printContent(content: String) = TODO()
 }

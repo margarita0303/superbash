@@ -1,5 +1,5 @@
 package io
 
-class ConsoleContentInputReader: ContentInputReader {
+class ConsoleContentInput: ContentInput {
     override fun getContent(): String = TODO()
 }

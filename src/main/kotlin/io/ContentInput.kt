@@ -1,5 +1,5 @@
 package io
 
-interface ContentInputReader {
+interface ContentInput {
     fun getContent(): String
 }

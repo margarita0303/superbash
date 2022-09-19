@@ -1,5 +1,5 @@
 package io
 
-interface ContentOutputPrinter {
+interface ContentOutput {
     fun printContent(content: String)
 }
