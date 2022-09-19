@@ -1,5 +1,5 @@
 package entities
 
-interface Argument {
+interface Argument: CLIEntity {
     fun getArgument(): String
 }
