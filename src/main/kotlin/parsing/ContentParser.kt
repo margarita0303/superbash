@@ -4,6 +4,10 @@ import Context
 import entities.CLIEntity
 import exceptions.ParseException
 
+
+/**
+ * A class that can parse user input
+ */
 class ContentParser {
     private class MarksStateHolder {
         private enum class State {  // quotation marks or not
@@ -58,11 +62,11 @@ class ContentParser {
     }
 
     /**
-     * Принимает строчку с запросом пользователя и *context* (который просто прокидывается дальше)
+     * Accepts a string with the user's request and *context* (which just scrolls further)
      *
-     * Возвращает список сущностей [CLIEntity], для создания которых он использует [CLIEntityCreator]
+     * @return list of [CLIEntity], it uses [CLIEntityCreator] to create
      *
-     * @throws ParseException если возникла ошибка при попытке создеать какое либо [CLIEntity]
+     * @throws ParseException if error occurred while trying to create any [CLIEntity]
      */
     fun parse(input: String, context: Context): List<CLIEntity> {
         val splitters = splitBySpace(input)
