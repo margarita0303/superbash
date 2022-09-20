@@ -1,5 +1,12 @@
 package io
 
 class ConsoleContentOutput: ContentOutput {
-    override fun printContent(content: String) = TODO()
+    private val prompt = "$> "
+    private fun printPrompt() {
+        println(prompt)
+    }
+    override fun printContent(content: String) {
+        println(content)
+        printPrompt()
+    }
 }
