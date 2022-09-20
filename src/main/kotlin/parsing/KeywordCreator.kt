@@ -4,9 +4,15 @@ import Context
 import entities.Keyword
 import entities.executors.*
 
+
+/**
+ * A class that can create all possible [Keyword]
+ */
 class KeywordCreator {
     /**
-     * Создаёт [Keyword] по переданной *keyword* и *[Context]*
+     * Creates [Keyword] by given *keyword* and *[Context]*
+     *
+     * @return [Keyword]
      */
     fun createKeyword(keyword: String, context: Context): Keyword = when(keyword) {
         "cat"   -> CatExecutor()

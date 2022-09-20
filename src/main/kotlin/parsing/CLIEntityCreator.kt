@@ -6,21 +6,31 @@ import entities.CLIArgument
 import entities.Initialization
 import entities.Keyword
 
+
+/**
+ * A class that can create all possible *[CLIEntity]*
+ */
 class CLIEntityCreator {
     private val keywordCreator = KeywordCreator()
 
     /**
-     * Создаёт [Initialization] по переданному *expression*
+     * Creates [Initialization] by given *expression*
+     *
+     * @return [Initialization]
      */
     fun createInitialization(expression: String): Initialization = Initialization()
 
     /**
-     * Создаёт [CLIArgument] по переданному *argument*
+     * Creates [CLIArgument] by given *argument*
+     *
+     * @return [CLIArgument]
      */
     fun createArgument(argument: String): Argument = CLIArgument(argument)
 
     /**
-     * Делегирует создание [Keyword] [KeywordCreator]
+     * Delegates creation [Keyword] [KeywordCreator]
+     *
+     * @return [Keyword]
      */
     fun createKeyword(keyword: String, context: Context): Keyword = keywordCreator.createKeyword(keyword, context)
 }
