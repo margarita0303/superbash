@@ -31,7 +31,7 @@ class ContentParser {
 
     private val cliEntityCreator = CLIEntityCreator()
 
-    private fun splitSpace(input: String): List<String> {
+    private fun splitBySpace(input: String): List<String> {
         val builder = StringBuilder()
         val splitters = mutableListOf<String>()
         val marksStateHolder = MarksStateHolder()
@@ -57,9 +57,15 @@ class ContentParser {
         return splitters
     }
 
+    /**
+     * Принимает строчку с запросом пользователя и context (который просто прокидывается дальше)
+     *
+     * Возвращает список сущностей ICLIEntity, для создания которых он использует CLIEntityCreator
+     *
+     * @throws ParseException если возникла ошибка при попытке создеать какое либо CLIEntity
+     */
     fun parse(input: String, context: Context): List<CLIEntity> {
-        val splitters = splitSpace(input)
-//        println(splitters)
+        val splitters = splitBySpace(input)
         val cliEntities = mutableListOf<CLIEntity>()
         val firstEntity = try {
              cliEntityCreator.createKeyword(splitters.first(), context)
