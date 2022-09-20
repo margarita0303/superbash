@@ -58,11 +58,11 @@ class ContentParser {
     }
 
     /**
-     * Принимает строчку с запросом пользователя и context (который просто прокидывается дальше)
+     * Принимает строчку с запросом пользователя и *context* (который просто прокидывается дальше)
      *
-     * Возвращает список сущностей ICLIEntity, для создания которых он использует CLIEntityCreator
+     * Возвращает список сущностей [CLIEntity], для создания которых он использует [CLIEntityCreator]
      *
-     * @throws ParseException если возникла ошибка при попытке создеать какое либо CLIEntity
+     * @throws ParseException если возникла ошибка при попытке создеать какое либо [CLIEntity]
      */
     fun parse(input: String, context: Context): List<CLIEntity> {
         val splitters = splitBySpace(input)
