@@ -13,7 +13,7 @@ class ConsoleContentOutput : ContentOutput {
      * Method to print a prompt
      */
     private fun printPrompt() {
-        println(prompt)
+        print(prompt)
     }
 
     /**
