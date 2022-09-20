@@ -7,7 +7,5 @@ class ConsoleContentInput : ContentInput {
     /**
      * Implementation of `getContent` interface method
      */
-    override fun getContent(): String {
-        return readln()
-    }
+    override fun getContent(): String = return readln()
 }

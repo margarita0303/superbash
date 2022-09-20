@@ -12,9 +12,7 @@ class ConsoleContentOutput : ContentOutput {
     /**
      * Method to print a prompt
      */
-    private fun printPrompt() {
-        print(prompt)
-    }
+    private fun printPrompt() = print(prompt)
 
     /**
      * Implementation of `printContent` interface method
