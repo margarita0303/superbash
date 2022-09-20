@@ -6,7 +6,7 @@ import entities.executors.*
 
 class KeywordCreator {
     /**
-     * Создаёт *Keyword* по переданной *keyword* и *context*
+     * Создаёт [Keyword] по переданной *keyword* и *[Context]*
      */
     fun createKeyword(keyword: String, context: Context): Keyword = when(keyword) {
         "cat"   -> CatExecutor()
