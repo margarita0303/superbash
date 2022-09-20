@@ -6,6 +6,7 @@ package io
 class ConsoleContentInput : ContentInput {
     /**
      * Implementation of `getContent` interface method
+     * @return content as `String`
      */
     override fun getContent(): String = return readln()
 }

@@ -16,6 +16,7 @@ class ConsoleContentOutput : ContentOutput {
 
     /**
      * Implementation of `printContent` interface method
+     * @param content String to print
      */
     override fun printContent(content: String) {
         println(content)
