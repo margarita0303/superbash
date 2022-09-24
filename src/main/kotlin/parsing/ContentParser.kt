@@ -9,23 +9,23 @@ import exceptions.ParseException
  * A class that can parse user input
  */
 class ContentParser {
-    private class MarksStateHolder {
-        private enum class State {  // quotation marks or not
-            STANDARD,
-            ONE_MARK,   // '
-            TWO_MARK    // "
-        }
+    private enum class State {  // quotation marks or not
+        STANDARD,
+        SINGLE_MARK = '\'',
+        QUOTE_MARK  = '"'
+    }
 
+    private class MarksStateHolder {
         var state = State.STANDARD
-        fun one() = when(state) {
-            State.STANDARD -> { state = State.ONE_MARK }
-            State.ONE_MARK -> { state = State.STANDARD }
+        fun singleMark() = when(state) {
+            State.STANDARD -> { state = State.SINGLE_MARK }
+            State.SINGLE_MARK -> { state = State.STANDARD }
             else -> {}
         }
 
-        fun two() = when(state) {
-            State.STANDARD -> { state = State.TWO_MARK }
-            State.TWO_MARK -> { state = State.STANDARD }
+        fun quoteMark() = when(state) {
+            State.STANDARD -> { state = State.QUOTE_MARK }
+            State.QUOTE_MARK -> { state = State.STANDARD }
             else -> {}
         }
 
@@ -40,12 +40,12 @@ class ContentParser {
         val splitters = mutableListOf<String>()
         val marksStateHolder = MarksStateHolder()
         input.forEach { ch -> when(ch) {
-            '\'' -> {
-                marksStateHolder.one()
+            State.SINGLE_MARK -> {
+                marksStateHolder.singleMark()
                 builder.append(ch)
             }
-            '"' -> {
-                marksStateHolder.two()
+            State.QUOTE_MARK -> {
+                marksStateHolder.quoteMark()
                 builder.append(ch)
             }
             ' ' -> {
