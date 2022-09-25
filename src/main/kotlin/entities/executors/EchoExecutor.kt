@@ -6,11 +6,11 @@ import java.util.*
 
 class EchoExecutor: Keyword {
     override fun execute(arguments: List<Argument>): Optional<String> {
-        var s = ""
+        var output = ""
         for (argument in arguments) {
-            s += argument.getArgument()
+            output += argument.getArgument()
         }
 
-        return Optional.of(s)
+        return Optional.of(output)
     }
 }
