@@ -25,11 +25,11 @@ class CatExecutor(private val curPath: Path): Keyword {
     }
 
     private fun tryRead(relPath: String): String {
-        try {
+        return try {
             val file = Paths.get(curPath.name + relPath).toFile()
-            return file.readText()
+            file.readText()
         } catch (e: InvalidPathException) {
-            throw RunException("cat: ${relPath}: No such file or directory")
+            "cat: ${relPath}: No such file or directory\n"
         }
     }
 }
