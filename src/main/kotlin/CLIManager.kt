@@ -23,13 +23,13 @@ class CLIManager {
      */
     fun run() {
         while (true) {
-            try {
+            val result: Optional<String> = try {
                 val parsedTokens = processInput()
-                val result = execute(parsedTokens)
-                processOutput(result)
+                execute(parsedTokens)
             } catch (ex: Exception) {
-                consoleContentOutput.printContent(ex.message ?: Constants.UNKNOWN_ERROR)
+                Optional.of(ex.message ?: Constants.UNKNOWN_ERROR)
             }
+            processOutput(result)
         }
     }
 
@@ -49,7 +49,6 @@ class CLIManager {
      * @param tokens List<CLIEntity> representing parsed command
      * @return Optional<String> containing possible result of execution
      */
-
     private fun execute(tokens: List<CLIEntity>): Optional<String> {
         if (tokens.isEmpty()) {
             return Optional.empty()
