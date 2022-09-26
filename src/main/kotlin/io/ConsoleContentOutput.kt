@@ -12,14 +12,13 @@ class ConsoleContentOutput : ContentOutput {
     /**
      * Method to print a prompt
      */
-    private fun printPrompt() = print(prompt)
+    fun printPrompt() = print(prompt)
 
     /**
      * Implementation of `printContent` interface method
      * @param content String to print
      */
     override fun printContent(content: String) {
-        println(content)
-        printPrompt()
+        print(content)
     }
 }

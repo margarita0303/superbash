@@ -5,6 +5,8 @@ import entities.Argument
 import entities.CLIArgument
 import entities.Initialization
 import entities.Keyword
+import exceptions.ParseException
+import kotlin.math.exp
 
 
 /**
@@ -18,7 +20,12 @@ class CLIEntityCreator {
      *
      * @return [Initialization]
      */
-    fun createInitialization(expression: String): Initialization = Initialization()
+    fun createInitialization(expression: String): Initialization {
+        val parsedExpression = expression.split("=")
+        if (parsedExpression.size != 2) throw ParseException("Can't parse expression: $expression")
+
+        return Initialization(parsedExpression[0], parsedExpression[1])
+    }
 
     /**
      * Creates [CLIArgument] by given *argument*
