@@ -1,15 +1,11 @@
 package parsing
 
 import Context
-import entities.executors.CatExecutor
-import entities.executors.EchoExecutor
-import entities.executors.PwdExecutor
-import entities.executors.WCExecutor
+import entities.executors.*
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.Mockito
 
 @RunWith(JUnit4::class)
 class KeywordCreatorTest {
