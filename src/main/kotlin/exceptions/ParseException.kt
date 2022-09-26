@@ -2,4 +2,4 @@ package exceptions
 
 import java.lang.Exception
 
-class ParseException: Exception()
+class ParseException(message: String): Exception(message)
