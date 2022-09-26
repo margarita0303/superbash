@@ -1,17 +1,32 @@
 package parsing
 
 import Context
+import entities.Keyword
 import org.junit.Assert
+import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import org.mockito.Mockito
+import org.powermock.api.mockito.PowerMockito
+import org.powermock.core.classloader.annotations.PrepareForTest
+import org.powermock.modules.junit4.PowerMockRunner
 
-@RunWith(JUnit4::class)
+@RunWith(PowerMockRunner::class)
+@PrepareForTest(KeywordCreator::class, Keyword::class)
 class CLIEntityCreatorTest {
-    private val context = Mockito.mock(Context::class.java)
-    private val keywordCreator = Mockito.mock(KeywordCreator::class.java)
+
+    private val keywordCreator = PowerMockito.mock(KeywordCreator::class.java)
+    private val keyword = PowerMockito.mock(Keyword::class.java)
+    private val context = Context()
     private val cliEntityCreator = CLIEntityCreator()
+
+    @Before
+    fun setUp() {
+        PowerMockito.whenNew(KeywordCreator::class.java)
+            .withAnyArguments()
+            .thenReturn(keywordCreator)
+    }
 
     @Test
     fun testCreateArgument() {
@@ -22,8 +37,8 @@ class CLIEntityCreatorTest {
 
     @Test
     fun testCreateKeyword() {
-        val someKeyword = "keyword"
-        Mockito.doNothing().`when`(keywordCreator).createKeyword(someKeyword, context)
+        val someKeyword = "cat"
+        Mockito.`when`(keywordCreator.createKeyword(someKeyword, context)).thenReturn(keyword)
         cliEntityCreator.createKeyword(someKeyword, context)
 
         Mockito.verify(keywordCreator.createKeyword(someKeyword, context))
