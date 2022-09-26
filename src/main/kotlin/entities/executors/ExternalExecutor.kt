@@ -3,6 +3,7 @@ package entities.executors
 import Context
 import entities.Argument
 import entities.Keyword
+import exceptions.ParseException
 import exceptions.RunException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -12,7 +13,7 @@ import kotlin.io.path.name
 
 class ExternalExecutor(private val curPath: Path, private val context: Context, private val relBinaryPath: Path): Keyword {
     override fun execute(arguments: List<Argument>): Optional<String> {
-        val binaryPath = getBinaryPath() ?: throw RunException("No such binary: ${relBinaryPath.name}")
+        val binaryPath = getBinaryPath() ?: throw ParseException("No such binary: ${relBinaryPath.name}")
 
         val process = ProcessBuilder(binaryPath.name, *arguments.map { it.getArgument() }.toTypedArray())
             .directory(curPath.toFile())
