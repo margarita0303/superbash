@@ -1,6 +1,7 @@
 import entities.Argument
 import entities.CLIEntity
 import entities.Keyword
+import exceptions.Constants
 import exceptions.RunException
 import io.ConsoleContentInput
 import io.ConsoleContentOutput
@@ -27,7 +28,7 @@ class CLIManager {
                 val result = execute(parsedTokens)
                 processOutput(result)
             } catch (ex: Exception) {
-                // do something
+                consoleContentOutput.printContent(ex.message ?: Constants.UNKNOWN_ERROR)
             }
         }
     }
@@ -48,6 +49,7 @@ class CLIManager {
      * @param tokens List<CLIEntity> representing parsed command
      * @return Optional<String> containing possible result of execution
      */
+
     private fun execute(tokens: List<CLIEntity>): Optional<String> {
         if (tokens.isEmpty()) {
             return Optional.empty()
