@@ -2,14 +2,35 @@ package parsing
 
 import Context
 import entities.Argument
+import entities.CLIArgument
 import entities.Initialization
 import entities.Keyword
 
+
+/**
+ * A class that can create all possible *[CLIEntity]*
+ */
 class CLIEntityCreator {
+    private val keywordCreator = KeywordCreator()
 
-    fun createInitialization(expression: String): Initialization = TODO()
+    /**
+     * Creates [Initialization] by given *expression*
+     *
+     * @return [Initialization]
+     */
+    fun createInitialization(expression: String): Initialization = Initialization()
 
-    fun createArgument(argument: String): Argument = TODO()
+    /**
+     * Creates [CLIArgument] by given *argument*
+     *
+     * @return [CLIArgument]
+     */
+    fun createArgument(argument: String): Argument = CLIArgument(argument)
 
-    fun createKeyword(keyword: Keyword, context: Context): Keyword = TODO()
+    /**
+     * Delegates creation [Keyword] [KeywordCreator]
+     *
+     * @return [Keyword]
+     */
+    fun createKeyword(keyword: String, context: Context): Keyword = keywordCreator.createKeyword(keyword, context)
 }
