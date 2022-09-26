@@ -2,6 +2,7 @@ package parsing
 
 import Context
 import entities.executors.CatExecutor
+import entities.executors.EchoExecutor
 import entities.executors.PwdExecutor
 import entities.executors.WCExecutor
 import org.junit.Assert
@@ -12,7 +13,7 @@ import org.mockito.Mockito
 
 @RunWith(JUnit4::class)
 class KeywordCreatorTest {
-    private val context = Mockito.mock(Context::class.java)
+    private val context = Context()
     private val keywordCreator = KeywordCreator()
 
     @Test
@@ -24,7 +25,7 @@ class KeywordCreatorTest {
     @Test
     fun testCreateKeywordIfEcho() {
         val keyword = keywordCreator.createKeyword(ECHO, context)
-        Assert.assertTrue(keyword is CatExecutor)
+        Assert.assertTrue(keyword is EchoExecutor)
     }
 
     @Test
