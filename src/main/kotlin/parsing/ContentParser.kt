@@ -9,10 +9,14 @@ import exceptions.ParseException
  * A class that can parse user input
  */
 class ContentParser {
+    object Marks {
+        const val SINGLE_MARK_CHAR = '\''
+        const val QUOTE_MARK_CHAR = '"'
+    }
     private enum class State {  // quotation marks or not
         STANDARD,
-        SINGLE_MARK = '\'',
-        QUOTE_MARK  = '"'
+        SINGLE_MARK,
+        QUOTE_MARK
     }
 
     private class MarksStateHolder {
@@ -40,13 +44,11 @@ class ContentParser {
         val splitters = mutableListOf<String>()
         val marksStateHolder = MarksStateHolder()
         input.forEach { ch -> when(ch) {
-            State.SINGLE_MARK -> {
+            Marks.SINGLE_MARK_CHAR -> {
                 marksStateHolder.singleMark()
-                builder.append(ch)
             }
-            State.QUOTE_MARK -> {
+            Marks.QUOTE_MARK_CHAR -> {
                 marksStateHolder.quoteMark()
-                builder.append(ch)
             }
             ' ' -> {
                 if (builder.isNotEmpty()) {
@@ -58,6 +60,7 @@ class ContentParser {
             }
             else -> builder.append(ch)
         }}
+        if (builder.isNotEmpty()) splitters.add(builder.toString())
         return splitters
     }
 
@@ -70,9 +73,11 @@ class ContentParser {
      */
     fun parse(input: String, context: Context): List<CLIEntity> {
         val splitters = splitBySpace(input)
+        if (splitters.isEmpty()) return listOf()
+
         val cliEntities = mutableListOf<CLIEntity>()
-        val firstEntity = try {
-             cliEntityCreator.createKeyword(splitters.first(), context)
+        val firstEntity: CLIEntity = try {
+            cliEntityCreator.createKeyword(splitters.first(), context)
         } catch (_: ParseException) {
             cliEntityCreator.createInitialization(splitters.first())
         }

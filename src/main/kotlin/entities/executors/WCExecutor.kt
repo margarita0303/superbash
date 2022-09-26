@@ -10,7 +10,7 @@ import kotlin.io.path.name
 
 class WCExecutor(private val curPath: Path): Keyword {
     private class Statistics(var lines: Int = 0, var words: Int = 0, var bytes: Int = 0) {
-        override fun toString(): String = "${lines} ${words} ${bytes}"
+        override fun toString(): String = "$lines $words $bytes"
 
         operator fun plusAssign(other: Statistics) {
             lines += other.lines
@@ -24,12 +24,12 @@ class WCExecutor(private val curPath: Path): Keyword {
         }
 
         var output = ""
-        var totalStatistics = Statistics()
+        val totalStatistics = Statistics()
 
         for (argument in arguments) {
             try {
                 val fileStat = processFile(argument.getArgument())
-                output += fileStat.toString() + " " + Paths.get(curPath.name + argument.getArgument()).fileName + "\n"
+                output += fileStat.toString() + " " + Paths.get(curPath.name + argument.getArgument()) + "\n"
                 totalStatistics += fileStat
             } catch (e: InvalidPathException) {
                 output += "wc: ${argument.getArgument()}: No such file or directory"
@@ -44,6 +44,6 @@ class WCExecutor(private val curPath: Path): Keyword {
     private fun processFile(relPath: String): Statistics {
         val file = Paths.get(curPath.name + relPath).toFile()
         val content = file.readText()
-        return Statistics(content.split('\n').size, content.split(' ').size, content.toByteArray().size)
+        return Statistics(content.count { it == '\n' }, content.split(' ').size, content.toByteArray().size)
     }
 }

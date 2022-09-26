@@ -12,9 +12,9 @@ import kotlin.io.path.exists
 import kotlin.io.path.name
 
 class ExternalExecutor(private val curPath: Path, private val context: Context, private val relBinaryPath: Path): Keyword {
-    override fun execute(arguments: List<Argument>): Optional<String> {
-        val binaryPath = getBinaryPath() ?: throw ParseException("No such binary: ${relBinaryPath.name}")
+    private val binaryPath = getBinaryPath() ?: throw ParseException("No such binary: ${relBinaryPath.name}")
 
+    override fun execute(arguments: List<Argument>): Optional<String> {
         val process = ProcessBuilder(binaryPath.name, *arguments.map { it.getArgument() }.toTypedArray())
             .directory(curPath.toFile())
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
