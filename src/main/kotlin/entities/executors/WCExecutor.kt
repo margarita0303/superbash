@@ -28,8 +28,8 @@ class WCExecutor(private val curPath: Path): Keyword {
 
         for (argument in arguments) {
             try {
-                val fileStat = processFile(argument.getArgument())
-                output += fileStat.toString() + " " + Paths.get(curPath.name + argument.getArgument()) + "\n"
+                val fileStat = processFile(Paths.get(argument.getArgument()))
+                output += fileStat.toString() + " " + Paths.get(curPath.toString() + argument.getArgument()).fileName + "\n"
                 totalStatistics += fileStat
             } catch (e: InvalidPathException) {
                 output += "wc: ${argument.getArgument()}: No such file or directory"
@@ -41,8 +41,12 @@ class WCExecutor(private val curPath: Path): Keyword {
         return Optional.of(output)
     }
 
-    private fun processFile(relPath: String): Statistics {
-        val file = Paths.get(curPath.name + relPath).toFile()
+    private fun processFile(relPath: Path): Statistics {
+        val file = if (relPath.isAbsolute) {
+            relPath.toFile()
+        } else {
+            Paths.get(curPath.name + relPath).toFile()
+        }
         val content = file.readText()
         return Statistics(content.count { it == '\n' }, content.split(' ').size, content.toByteArray().size)
     }
