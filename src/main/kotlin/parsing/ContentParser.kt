@@ -9,7 +9,8 @@ import exceptions.ParseException
  * A class that can parse user input
  */
 class ContentParser {
-    object Marks {
+    object ImportantChars {
+        const val SPACE = ' '
         const val SINGLE_MARK_CHAR = '\''
         const val QUOTE_MARK_CHAR = '"'
     }
@@ -44,13 +45,13 @@ class ContentParser {
         val splitters = mutableListOf<String>()
         val marksStateHolder = MarksStateHolder()
         input.forEach { ch -> when(ch) {
-            Marks.SINGLE_MARK_CHAR -> {
+            ImportantChars.SINGLE_MARK_CHAR -> {
                 marksStateHolder.singleMark()
             }
-            Marks.QUOTE_MARK_CHAR -> {
+            ImportantChars.QUOTE_MARK_CHAR -> {
                 marksStateHolder.quoteMark()
             }
-            ' ' -> {
+            ImportantChars.SPACE -> {
                 if (builder.isNotEmpty()) {
                     if (marksStateHolder.isStandard) {
                         splitters.add(builder.toString())
