@@ -1,4 +1,4 @@
 class Context {
-    private var variables = mutableMapOf<String, String>()
-    private var directory = "/"
+    var variables = mutableMapOf<String, String>()
+    var directory = "/"
 }
