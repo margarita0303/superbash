@@ -9,13 +9,15 @@ version = '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+
 dependencies {
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.7.10'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     // Mockito dependency
-    testImplementation 'org.mockito:mockito-all:1.10.19'
+    testImplementation 'org.mockito:mockito-core:2.8.9'
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
 
     // PowerMockito dependency
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'

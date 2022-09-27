@@ -52,7 +52,11 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
     }
 
     private fun tryGetRelative() : Path? {
-        val path = Paths.get(curPath.name + relBinaryPath.name)
+        val path = if (relBinaryPath.isAbsolute) {
+            relBinaryPath
+        } else {
+            Paths.get(curPath.toString() + relBinaryPath.toString())
+        }
         if (path.exists()) return path
 
         return null

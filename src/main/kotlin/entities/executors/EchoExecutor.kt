@@ -6,11 +6,7 @@ import java.util.*
 
 class EchoExecutor: Keyword {
     override fun execute(arguments: List<Argument>): Optional<String> {
-        var output = ""
-        for (argument in arguments) {
-            output += argument.getArgument() + ' '
-        }
-
+        val output = arguments.map { it.getArgument() }.joinToString(" ") + "\n"
         return Optional.of(output)
     }
 }
