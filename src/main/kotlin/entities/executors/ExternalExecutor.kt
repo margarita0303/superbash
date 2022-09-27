@@ -35,7 +35,7 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
     }
 
     private fun tryGetInPathVariable() : Path? {
-        val pathVariables = context.variables["PATH"]?.split(':')
+        val pathVariables = context.variables["PATH"]?.split(';')
 
         if (pathVariables != null) {
             for (pathString in pathVariables) {
