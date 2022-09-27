@@ -8,7 +8,17 @@ import java.nio.file.Paths
 import java.util.*
 import kotlin.io.path.name
 
+/**
+ * Class for `wc` execution
+ * @param curPath stores current path from context
+ */
 class WCExecutor(private val curPath: Path): Keyword {
+    /**
+     * Class that stores statistics of files (lines, words and bytes)
+     * @param lines is count of lines in file
+     * @param words stores count of words in file
+     * @param bytes stores bytes in file
+     */
     private class Statistics(var lines: Int = 0, var words: Int = 0, var bytes: Int = 0) {
         override fun toString(): String = "$lines $words $bytes"
 
@@ -18,6 +28,12 @@ class WCExecutor(private val curPath: Path): Keyword {
             bytes += other.bytes
         }
     }
+
+    /**
+     * Method to execute `wc`
+     * @param arguments stores files on which run `wc`
+     * @return statistics for every file
+     */
     override fun execute(arguments: List<Argument>): Optional<String> {
         if (arguments.isEmpty()) {
             return Optional.empty()
@@ -41,6 +57,11 @@ class WCExecutor(private val curPath: Path): Keyword {
         return Optional.of(output)
     }
 
+    /**
+     * Method to count statistics for one file
+     * @param relPath path to file (maybe relative)
+     * @return statistics
+     */
     private fun processFile(relPath: Path): Statistics {
         val file = if (relPath.isAbsolute) {
             relPath.toFile()
