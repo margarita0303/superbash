@@ -11,9 +11,23 @@ import java.util.*
 import kotlin.io.path.exists
 import kotlin.io.path.name
 
+/**
+ * Class to execute external command (binary)
+ * @param curPath stores current path in context
+ * @param context stores context from CLIManager
+ * @param relBinaryPath stores path to binary to execute (maybe relative)
+ */
 class ExternalExecutor(private val curPath: Path, private val context: Context, private val relBinaryPath: Path): Keyword {
+    /**
+     * Absolute path to binary got from `PATH` variable or checked relative path
+     */
     private val binaryPath = getBinaryPath() ?: throw ParseException("No such binary: ${relBinaryPath.name}")
 
+    /**
+     * Method to execute external binary
+     * @param arguments stores arguments for binary
+     * @return Binary output
+     */
     override fun execute(arguments: List<Argument>): Optional<String> {
         val process = ProcessBuilder(binaryPath.name, *arguments.map { it.getArgument() }.toTypedArray())
             .directory(curPath.toFile())
@@ -27,6 +41,10 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
         return Optional.of(output)
     }
 
+    /**
+     * Method to get binary path from `PATH` or from relative path
+     * @return path or null
+     */
     private fun getBinaryPath() : Path? {
         tryGetInPathVariable()?.let { return it }
         tryGetRelative()?.let { return it }
@@ -34,6 +52,10 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
         return null
     }
 
+    /**
+     * Method to get binary path from `PATH`
+     * @return path or null
+     */
     private fun tryGetInPathVariable() : Path? {
         val pathVariables = context.variables["PATH"]?.split(':')
 
@@ -51,6 +73,10 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
         return null
     }
 
+    /**
+     * Method to find binary using relative path
+     * @return path or null
+     */
     private fun tryGetRelative() : Path? {
         val path = if (relBinaryPath.isAbsolute) {
             relBinaryPath

@@ -9,7 +9,16 @@ import java.nio.file.Paths
 import java.util.*
 import kotlin.io.path.name
 
+/**
+ * Class to execute `cat` command
+ * @param curPath stores current path from context
+ */
 class CatExecutor(private val curPath: Path): Keyword {
+    /**
+     * Method to execute `cat`
+     * @param arguments stores files to cat
+     * @return all files contents
+     */
     override fun execute(arguments: List<Argument>): Optional<String> {
         if (arguments.isEmpty()) {
             return Optional.empty()
@@ -24,6 +33,11 @@ class CatExecutor(private val curPath: Path): Keyword {
         return Optional.of(output)
     }
 
+    /**
+     * Method to read a file
+     * @param relPath stores path to file
+     * @return file content
+     */
     private fun tryRead(relPath: Path): String {
         return try {
             val file = if (relPath.isAbsolute) {
