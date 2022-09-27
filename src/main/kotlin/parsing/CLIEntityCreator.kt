@@ -3,7 +3,6 @@ package parsing
 import Context
 import entities.*
 import exceptions.ParseException
-import kotlin.math.exp
 
 
 /**
@@ -38,11 +37,16 @@ class CLIEntityCreator {
      */
     fun createKeyword(keyword: String, context: Context): Keyword = keywordCreator.createKeyword(keyword, context)
 
-    fun createExit(keyword: String): Exit {
-        return if (keyword == "exit") {
+    /**
+     * Creates [Exit] if token's content is 'exit'
+     *
+     * @return [Exit]
+     */
+    fun createExit(token: String): Exit {
+        return if (token == "exit") {
             Exit()
         } else {
-            throw ParseException("Can't parse expression: $keyword")
+            throw ParseException("Can't parse expression: $token")
         }
     }
 }
