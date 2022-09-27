@@ -33,3 +33,4 @@ jobs:
         with:
           arguments: build
           gradle-executable: superbash/gradlew
+          build-root-directory: superbash
