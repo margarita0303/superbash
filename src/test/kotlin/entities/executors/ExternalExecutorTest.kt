@@ -38,8 +38,8 @@ class ExternalExecutorTest {
         when (getOS()) {
             OS.WINDOWS -> {
                 context.directory = curPath.toString()
-                context.variables["PATH"] = "C:\\Windows\\;C:\\Windows\\System\\;C:\\Windows\\System32"
-                command = "ECHO.exe"
+                context.variables["PATH"] = WIN_WHERE_PATH
+                command = "where.exe"
             }
 
             OS.LINUX -> {
@@ -53,9 +53,27 @@ class ExternalExecutorTest {
     }
 
     @Test
-    fun testCatFile1() {
+    fun testExternalExecutor() {
+        when (getOS()) {
+            OS.WINDOWS -> testExternalExecutorIfWindows()
+            OS.LINUX -> testExternalExecutorIfLinux()
+            else -> throw TestAbortedException("Unknown OS for testing")
+        }
+    }
+
+    private fun testExternalExecutorIfLinux() {
         val externalExecutor = ExternalExecutor(curPath, context, Paths.get(command))
         val result = externalExecutor.execute(listOf(CLIArgument("123")))
         Assert.assertEquals("123\n", result.get())
+    }
+
+    private fun testExternalExecutorIfWindows() {
+        val externalExecutor = ExternalExecutor(curPath, context, Paths.get(command))
+        val result = externalExecutor.execute(listOf(CLIArgument("where")))
+        Assert.assertEquals("$WIN_WHERE_PATH\\where.exe\r\n", result.get())
+    }
+
+    companion object {
+        private val WIN_WHERE_PATH = "C:\\Windows\\System32"
     }
 }
