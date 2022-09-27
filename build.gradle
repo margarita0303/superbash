@@ -9,8 +9,9 @@ version = '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
-
 dependencies {
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.7.10'
+
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     // Mockito dependency
@@ -37,4 +38,12 @@ compileTestKotlin {
 
 application {
     mainClassName = 'MainKt'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'MainKt'
+        )
+    }
 }
