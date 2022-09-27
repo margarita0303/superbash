@@ -1,12 +1,8 @@
 package parsing
 
 import Context
-import entities.Argument
-import entities.CLIArgument
-import entities.Initialization
-import entities.Keyword
+import entities.*
 import exceptions.ParseException
-import kotlin.math.exp
 
 
 /**
@@ -40,4 +36,17 @@ class CLIEntityCreator {
      * @return [Keyword]
      */
     fun createKeyword(keyword: String, context: Context): Keyword = keywordCreator.createKeyword(keyword, context)
+
+    /**
+     * Creates [Exit] if token's content is 'exit'
+     *
+     * @return [Exit]
+     */
+    fun createExit(token: String): Exit {
+        return if (token == "exit") {
+            Exit()
+        } else {
+            throw ParseException("Can't parse expression: $token")
+        }
+    }
 }
