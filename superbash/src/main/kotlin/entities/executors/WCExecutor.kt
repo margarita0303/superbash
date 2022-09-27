@@ -2,6 +2,8 @@ package entities.executors
 
 import entities.Argument
 import entities.Keyword
+import java.io.File
+import java.lang.Exception
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -44,7 +46,8 @@ class WCExecutor(private val curPath: Path): Keyword {
 
         for (argument in arguments) {
             try {
-                val fileStat = processFile(Paths.get(argument.getArgument()))
+                val file = getFile(argument.getArgument())
+                val fileStat = processFile(file)
                 output += fileStat.toString() + " " + Paths.get(curPath.toString() + argument.getArgument()).fileName + "\n"
                 totalStatistics += fileStat
             } catch (e: InvalidPathException) {
@@ -62,13 +65,35 @@ class WCExecutor(private val curPath: Path): Keyword {
      * @param relPath path to file (maybe relative)
      * @return statistics
      */
-    private fun processFile(relPath: Path): Statistics {
-        val file = if (relPath.isAbsolute) {
-            relPath.toFile()
-        } else {
-            Paths.get(curPath.name + relPath).toFile()
-        }
+    private fun processFile(file: File): Statistics {
         val content = file.readText()
         return Statistics(content.count { it == '\n' }, content.split(' ').size, content.toByteArray().size)
+    }
+
+    /**
+     * Method to check is path is absolute
+     * @param path stores path to file
+     * @return true if path exists and it is absolute
+     */
+    private fun isAbsolute(path: String): Boolean {
+        return try {
+            val pathCheck = Paths.get(path)
+            pathCheck.isAbsolute
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /**
+     * Method to get a file class based on curPath and path
+     * @param path to a file
+     * @return File based on configuration
+     */
+    private fun getFile(path: String): File {
+        return if (isAbsolute(path)) {
+            Paths.get(path).toFile()
+        } else {
+            Paths.get(curPath.name + path).toFile()
+        }
     }
 }
