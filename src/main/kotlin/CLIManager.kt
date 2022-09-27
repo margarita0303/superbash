@@ -1,7 +1,4 @@
-import entities.Argument
-import entities.CLIEntity
-import entities.Initialization
-import entities.Keyword
+import entities.*
 import exceptions.Constants
 import exceptions.RunException
 import io.ConsoleContentInput
@@ -18,12 +15,13 @@ class CLIManager {
     private val consoleContentInput = ConsoleContentInput()
     private val consoleContentOutput = ConsoleContentOutput()
     private val context = Context()
+    private var shouldExit = false
 
     /**
      * Method to handle interaction with user
      */
     fun run() {
-        while (true) {
+        while (!shouldExit) {
             consoleContentOutput.printPrompt()
             val result: Optional<String> = try {
                 val parsedTokens = processInput()
@@ -54,6 +52,11 @@ class CLIManager {
     private fun execute(tokens: List<CLIEntity>): Optional<String> {
         if (tokens.isEmpty()) {
             return Optional.empty()
+        }
+
+        if (tokens.size == 1 && tokens.first() is Exit) {
+            shouldExit = true
+            return Optional.of("")
         }
 
         when {
