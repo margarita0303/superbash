@@ -34,6 +34,6 @@ fun splitBySpaceAndPipe(input: String): List<String> {
         }
         else -> builder.append(ch)
     }}
-    if (builder.isNotEmpty()) splitters.add(builder.toString()) // ?
+    if (builder.isNotEmpty()) splitters.add(builder.toString())
     return splitters
 }
