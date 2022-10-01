@@ -10,8 +10,14 @@ import java.util.*
 /**
  * Class to manage interaction with user
  */
-class CLIManager {
+class CLIManager(startDirectory: String = "/") {
     private val context = Context()
+
+    init {
+        context.directory = startDirectory
+        context.variables["PATH"] = ""
+    }
+
     private val parser = ContentParser()
 
     /**
