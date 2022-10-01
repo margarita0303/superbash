@@ -1,5 +1,5 @@
 import org.junit.Assert
-import org.junit.Ignore
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -31,7 +31,7 @@ class CLIManagerTest {
         Assert.assertTrue(result.shouldExit)
     }
 
-    @Ignore("Exit codes not implemented yet")
+    @Disabled("Exit codes not implemented yet")
     @Test
     fun testExitOneParameter() {
         val result = manager.run("exit 1")
@@ -102,7 +102,7 @@ class CLIManagerTest {
 
     @Test
     fun testCatWithError() {
-        val result = manager.run("cat ${FILE1_TEST} amogus")
+        val result = manager.run("cat $FILE1_TEST amogus")
         Assert.assertEquals(FILE1_CONTENT + "cat: amogus: No such file or directory\n", result.output.get())
         Assert.assertFalse(result.shouldExit)
     }
@@ -118,7 +118,7 @@ class CLIManagerTest {
     fun testWCDouble() {
         val result = manager.run("wc $FILE1_TEST $FILE2_TEST")
         Assert.assertEquals(
-            "${FILE1_LINES} ${FILE1_WORDS} ${FILE1_BYTES} test_file1.txt\n${FILE2_LINES} ${FILE2_WORDS} ${FILE2_BYTES} test_file2.txt\n${TOTAL_LINES} ${TOTAL_WORDS} ${TOTAL_BYTES} total\n",
+            "$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\n${FILE2_LINES} $FILE2_WORDS $FILE2_BYTES test_file2.txt\n${TOTAL_LINES} $TOTAL_WORDS $TOTAL_BYTES total\n",
             result.output.get()
         )
         Assert.assertFalse(result.shouldExit)
@@ -128,7 +128,7 @@ class CLIManagerTest {
     fun testWCDoubleWithError() {
         val result = manager.run("wc $FILE1_TEST amogus $FILE2_TEST")
         Assert.assertEquals(
-            "${FILE1_LINES} ${FILE1_WORDS} ${FILE1_BYTES} test_file1.txt\nwc: amogus: No such file or directory\n${FILE2_LINES} ${FILE2_WORDS} ${FILE2_BYTES} test_file2.txt\n${TOTAL_LINES} ${TOTAL_WORDS} ${TOTAL_BYTES} total\n",
+            "$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\nwc: amogus: No such file or directory\n${FILE2_LINES} $FILE2_WORDS $FILE2_BYTES test_file2.txt\n${TOTAL_LINES} $TOTAL_WORDS $TOTAL_BYTES total\n",
             result.output.get()
         )
         Assert.assertFalse(result.shouldExit)
