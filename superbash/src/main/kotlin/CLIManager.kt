@@ -4,6 +4,9 @@ import entities.Initialization
 import entities.Keyword
 import exceptions.Constants
 import parsing.ContentParser
+import parsing.VariablesSubstitutor
+import java.security.Key
+
 import java.util.*
 
 /**
@@ -18,6 +21,7 @@ class CLIManager(startDirectory: String = "/") {
     }
 
     private val parser = ContentParser()
+    private val substitutor = VariablesSubstitutor()
 
     /**
      * Method to execute query
@@ -25,7 +29,8 @@ class CLIManager(startDirectory: String = "/") {
      * @return output for query and flag to handle `exit`
      */
     fun run(query: String): Optional<String> = try {
-        val parsedTokens = parser.parse(query, context)
+        val substitutedContent = substitutor.substitute(query, context)
+        val parsedTokens = parser.parse(substitutedContent, context)
         execute(parsedTokens)
     } catch (ex: Exception) {
         Optional.of((ex.message ?: Constants.UNKNOWN_ERROR) + '\n')
