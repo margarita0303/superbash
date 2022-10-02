@@ -12,12 +12,8 @@ fun main(args: Array<String>) {
         val query = input.getContent()
         val result = cliManager.run(query)
 
-        if (result.output.isPresent) {
-            output.printContent(result.output.get())
-        }
-
-        if (result.shouldExit) {
-            return
+        if (result.isPresent) {
+            output.printContent(result.get())
         }
     }
 }

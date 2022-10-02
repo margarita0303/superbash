@@ -1,10 +1,9 @@
-import entities.*
+import entities.Argument
+import entities.CLIEntity
+import entities.Initialization
+import entities.Keyword
 import exceptions.Constants
-import exceptions.RunException
-import io.ConsoleContentInput
-import io.ConsoleContentOutput
 import parsing.ContentParser
-import java.security.Key
 import java.util.*
 
 /**
@@ -25,25 +24,21 @@ class CLIManager(startDirectory: String = "/") {
      * @param query from user
      * @return output for query and flag to handle `exit`
      */
-    fun run(query: String): ExecutionResult = try {
+    fun run(query: String): Optional<String> = try {
         val parsedTokens = parser.parse(query, context)
         execute(parsedTokens)
     } catch (ex: Exception) {
-        ExecutionResult(Optional.of((ex.message ?: Constants.UNKNOWN_ERROR) + '\n'))
+        Optional.of((ex.message ?: Constants.UNKNOWN_ERROR) + '\n')
     }
 
     /**
      * Method to handle parsed entities
      * @param tokens List<CLIEntity> representing parsed command
-     * @return ExecutionResult containing possible result of an execution
+     * @return Optional<String> containing possible result of an execution
      */
-    private fun execute(tokens: List<CLIEntity>): ExecutionResult {
+    private fun execute(tokens: List<CLIEntity>): Optional<String> {
         if (tokens.isEmpty()) {
-            return ExecutionResult(Optional.empty())
-        }
-
-        if (tokens.size == 1 && tokens.first() is Exit) {
-            return ExecutionResult(Optional.of(""), shouldExit = true)
+            return Optional.empty()
         }
 
         when {
@@ -56,17 +51,17 @@ class CLIManager(startDirectory: String = "/") {
             }
         }
 
-        return ExecutionResult(Optional.empty())
+        return Optional.empty()
     }
 
-    private fun executeKeyword(tokens: List<CLIEntity>): ExecutionResult {
+    private fun executeKeyword(tokens: List<CLIEntity>): Optional<String> {
         val firstToken = tokens.first() as Keyword
-        return ExecutionResult(firstToken.execute(tokens.drop(1).map { it as Argument }))
+        return firstToken.execute(tokens.drop(1).map { it as Argument })
     }
 
-    private fun executeInitialization(tokens: List<CLIEntity>): ExecutionResult {
+    private fun executeInitialization(tokens: List<CLIEntity>): Optional<String> {
         val firstToken = tokens.first() as Initialization
         context.variables[firstToken.valueName] = firstToken.value
-        return ExecutionResult(Optional.empty())
+        return Optional.empty()
     }
 }

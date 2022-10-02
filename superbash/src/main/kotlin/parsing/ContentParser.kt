@@ -2,7 +2,6 @@ package parsing
 
 import Context
 import entities.CLIEntity
-import entities.Exit
 import exceptions.ParseException
 
 
@@ -80,14 +79,12 @@ class ContentParser {
         val cliEntities = mutableListOf<CLIEntity>()
         val actionCommand = splitters.first()
 
-        val firstEntity: CLIEntity = when(actionCommand) {
-            "exit" -> Exit()
-            else -> try {
-                cliEntityCreator.createKeyword(actionCommand, context)
-            } catch (_: ParseException) {
-                cliEntityCreator.createInitialization(actionCommand)
-            }
+        val firstEntity: CLIEntity = try {
+            cliEntityCreator.createKeyword(actionCommand, context)
+        } catch (_: ParseException) {
+            cliEntityCreator.createInitialization(actionCommand)
         }
+
 
         cliEntities.add(firstEntity)
         splitters.drop(1).forEach { arg ->
