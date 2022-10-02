@@ -3,6 +3,7 @@ package entities.executors
 import entities.Argument
 import entities.Keyword
 import java.io.File
+import java.io.FileNotFoundException
 import java.lang.Exception
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -50,8 +51,8 @@ class WCExecutor(private val curPath: Path): Keyword {
                 val fileStat = processFile(file)
                 output += fileStat.toString() + " " + Paths.get(curPath.toString() + argument.getArgument()).fileName + "\n"
                 totalStatistics += fileStat
-            } catch (e: InvalidPathException) {
-                output += "wc: ${argument.getArgument()}: No such file or directory"
+            } catch (e: FileNotFoundException) {
+                output += "wc: ${argument.getArgument()}: No such file or directory\n"
             }
         }
 
