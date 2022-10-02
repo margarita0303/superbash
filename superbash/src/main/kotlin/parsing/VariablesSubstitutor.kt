@@ -3,6 +3,7 @@ package parsing
 import Context
 import parsing.helpers.ImportantChars
 import parsing.helpers.splitBySpaceAndPipe
+import kotlin.math.sin
 
 /**
  * A class that substitutes variables in content if content is in quote marks or without any marks
@@ -38,16 +39,23 @@ class VariablesSubstitutor {
     }
 
     /**
-     * Check if string is inside quote marks
+     * Checks if string is inside quote marks
      */
     private fun String.isQuoteMarkString(): Boolean {
         return first() == ImportantChars.QUOTE_MARK_CHAR && last() == ImportantChars.QUOTE_MARK_CHAR
     }
 
     /**
+     * Checks if string is inside single marks
+     */
+    private fun String.isSingleMarkString(): Boolean {
+        return first() == ImportantChars.SINGLE_MARK_CHAR && last() == ImportantChars.SINGLE_MARK_CHAR
+    }
+
+    /**
      * Check if string has no border marks
      */
     private fun String.isNotMarkedString(): Boolean {
-        return !contains(ImportantChars.SINGLE_MARK_CHAR) && !contains(ImportantChars.QUOTE_MARK_CHAR)
+        return !isQuoteMarkString() && !isSingleMarkString()
     }
 }
