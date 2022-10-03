@@ -10,6 +10,11 @@ import kotlin.system.exitProcess
  * Class that describes `exit` command
  */
 class Exit: Keyword {
+    /**
+     * Execute exiting from process
+     * @param arguments stores arguments for exit
+     * @return empty if it didn't exit
+     */
     override fun execute(arguments: List<Argument>): Optional<String> {
         if (arguments.size > 1) {
             return Optional.of("exit: too many arguments")
