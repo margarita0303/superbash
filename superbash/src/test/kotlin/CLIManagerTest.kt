@@ -120,80 +120,70 @@ class CLIManagerTest {
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_1() {
         val result = manager.run("echo 2 | wc")
         Assert.assertEquals("1 1 2\n", result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_2() {
         val result = manager.run("echo 2 | wc | echo 3")
         Assert.assertEquals("3\n", result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_3() {
         val result = manager.run("wc $FILE1_TEST | echo 3")
         Assert.assertEquals("3\n", result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_4() {
         val result = manager.run("cat $FILE1_TEST | wc")
         Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_5() {
         val result = manager.run("cat $FILE1_TEST | wc")
         Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_6() {
         val result = manager.run("echo 2 | pwd")
         Assert.assertEquals(testDir, result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_7() {
         val result = manager.run("pwd | pwd")
         Assert.assertEquals(testDir, result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_8() {
         val result = manager.run("pwd | pwd")
         Assert.assertEquals(testDir, result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_9() {
         val result = manager.run("cat $FILE2_TEST | cat $FILE1_TEST")
-        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+        println("result ${result.get()}")
+        Assert.assertEquals(FILE1_CONTENT, result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_10() {
         val result = manager.run("cat $FILE2_TEST | wc $FILE1_TEST")
-        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\n", result.get())
     }
 
     @Test
-    @Disabled("Phase2 not implemented yet")
     fun testPhase2_11() {
         val result = manager.run("echo 2 | wc $FILE1_TEST")
-        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\n", result.get())
     }
 
     companion object {

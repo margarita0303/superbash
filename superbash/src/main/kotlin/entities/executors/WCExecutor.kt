@@ -6,7 +6,6 @@ import entities.PipeArgument
 import java.io.File
 import java.io.FileNotFoundException
 import java.lang.Exception
-import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
@@ -47,12 +46,17 @@ class WCExecutor(private val curPath: Path): Keyword {
         }
 
         var output = ""
+        if (updatedArguments.size == 1 && updatedArguments.last() is PipeArgument) {
+            val fileStat = processText(updatedArguments.first().getArgument())
+            output += fileStat.toString() + "\n"
+            return Optional.of(output)
+        }
         val totalStatistics = Statistics()
 
         for (argument in updatedArguments) {
             try {
                 val file = getFile(argument.getArgument())
-                val fileStat = processFile(file)
+                val fileStat = processText(file.readText())
                 output += fileStat.toString() + " " + Paths.get(curPath.toString() + argument.getArgument()).fileName + "\n"
                 totalStatistics += fileStat
             } catch (e: FileNotFoundException) {
@@ -70,8 +74,7 @@ class WCExecutor(private val curPath: Path): Keyword {
      * @param relPath path to file (maybe relative)
      * @return statistics
      */
-    private fun processFile(file: File): Statistics {
-        val content = file.readText()
+    private fun processText(content: String): Statistics {
         return Statistics(content.count { it == '\n' }, content.split(' ').size, content.toByteArray().size)
     }
 
