@@ -14,104 +14,91 @@ class CLIManagerTest {
     @Test
     fun testEcho() {
         val result = manager.run("echo 123")
-        Assert.assertEquals("123\n", result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals("123\n", result.get())
     }
 
     @Test
     fun testEchoSplitted() {
         val result = manager.run("echo 1 2 3")
-        Assert.assertEquals("1 2 3\n", result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals("1 2 3\n", result.get())
     }
 
+    @Disabled("Exit should be tested in child process")
     @Test
     fun testExit() {
         val result = manager.run("exit")
-        Assert.assertTrue(result.shouldExit)
     }
 
-    @Disabled("Exit codes not implemented yet")
+    @Disabled("Exit should be tested in child process")
     @Test
     fun testExitOneParameter() {
         val result = manager.run("exit 1")
-        Assert.assertTrue(result.shouldExit)
     }
 
+    @Disabled("Exit should be tested in child process")
     @Test
     fun testExitTwoParameters() {
         val result = manager.run("exit 1 2")
-        Assert.assertFalse(result.shouldExit)
     }
 
     @Test
     fun testPwd() {
         val result = manager.run("pwd")
-        Assert.assertEquals(testDir, result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(testDir, result.get())
     }
 
     @Test
     fun testPwdOneArgument() {
         val result = manager.run("pwd 1")
-        Assert.assertEquals(testDir, result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(testDir, result.get())
     }
 
     @Test
     fun testPwdThreeArguments() {
         val result = manager.run("pwd 1 2 3")
-        Assert.assertEquals(testDir, result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(testDir, result.get())
     }
 
     @Test
     fun testCat1() {
         val result = manager.run("cat $FILE1_TEST")
-        Assert.assertEquals(FILE1_CONTENT, result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(FILE1_CONTENT, result.get())
     }
 
     @Test
     fun testCat2() {
         val result = manager.run("cat $FILE2_TEST")
-        Assert.assertEquals(FILE2_CONTENT, result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(FILE2_CONTENT, result.get())
     }
 
     @Test
     fun testCatDouble() {
         val result = manager.run("cat $FILE1_TEST $FILE2_TEST")
-        Assert.assertEquals(FILE1_CONTENT + FILE2_CONTENT, result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(FILE1_CONTENT + FILE2_CONTENT, result.get())
     }
 
     @Test
     fun testCatSelfTriple() {
         val result = manager.run("cat $FILE1_TEST $FILE1_TEST $FILE1_TEST")
-        Assert.assertEquals(FILE1_CONTENT + FILE1_CONTENT + FILE1_CONTENT, result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(FILE1_CONTENT + FILE1_CONTENT + FILE1_CONTENT, result.get())
     }
 
     @Test
     fun testCatError() {
         val result = manager.run("cat amogus")
-        Assert.assertEquals("cat: amogus: No such file or directory\n", result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals("cat: amogus: No such file or directory\n", result.get())
     }
 
     @Test
     fun testCatWithError() {
         val result = manager.run("cat $FILE1_TEST amogus")
-        Assert.assertEquals(FILE1_CONTENT + "cat: amogus: No such file or directory\n", result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals(FILE1_CONTENT + "cat: amogus: No such file or directory\n", result.get())
     }
 
     @Test
     fun testWC() {
         val result = manager.run("wc $FILE1_TEST")
-        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\n", result.output.get())
-        Assert.assertFalse(result.shouldExit)
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\n", result.get())
     }
 
     @Test
@@ -119,9 +106,8 @@ class CLIManagerTest {
         val result = manager.run("wc $FILE1_TEST $FILE2_TEST")
         Assert.assertEquals(
             "$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\n${FILE2_LINES} $FILE2_WORDS $FILE2_BYTES test_file2.txt\n${TOTAL_LINES} $TOTAL_WORDS $TOTAL_BYTES total\n",
-            result.output.get()
+            result.get()
         )
-        Assert.assertFalse(result.shouldExit)
     }
 
     @Test
@@ -129,12 +115,86 @@ class CLIManagerTest {
         val result = manager.run("wc $FILE1_TEST amogus $FILE2_TEST")
         Assert.assertEquals(
             "$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\nwc: amogus: No such file or directory\n${FILE2_LINES} $FILE2_WORDS $FILE2_BYTES test_file2.txt\n${TOTAL_LINES} $TOTAL_WORDS $TOTAL_BYTES total\n",
-            result.output.get()
+            result.get()
         )
-        Assert.assertFalse(result.shouldExit)
     }
 
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_1() {
+        val result = manager.run("echo 2 | wc")
+        Assert.assertEquals("1 1 2\n", result.get())
+    }
 
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_2() {
+        val result = manager.run("echo 2 | wc | echo 3")
+        Assert.assertEquals("3\n", result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_3() {
+        val result = manager.run("wc $FILE1_TEST | echo 3")
+        Assert.assertEquals("3\n", result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_4() {
+        val result = manager.run("cat $FILE1_TEST | wc")
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_5() {
+        val result = manager.run("cat $FILE1_TEST | wc")
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_6() {
+        val result = manager.run("echo 2 | pwd")
+        Assert.assertEquals(testDir, result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_7() {
+        val result = manager.run("pwd | pwd")
+        Assert.assertEquals(testDir, result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_8() {
+        val result = manager.run("pwd | pwd")
+        Assert.assertEquals(testDir, result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_9() {
+        val result = manager.run("cat $FILE2_TEST | cat $FILE1_TEST")
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_10() {
+        val result = manager.run("cat $FILE2_TEST | wc $FILE1_TEST")
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+    }
+
+    @Test
+    @Disabled("Phase2 not implemented yet")
+    fun testPhase2_11() {
+        val result = manager.run("echo 2 | wc $FILE1_TEST")
+        Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES\n", result.get())
+    }
 
     companion object {
         private val FILE1_TEST = Paths.get("src/test/resources/test_file1.txt").absolute().toFile()

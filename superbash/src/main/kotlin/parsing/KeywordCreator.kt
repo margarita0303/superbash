@@ -22,6 +22,7 @@ class KeywordCreator {
             "echo"  -> EchoExecutor()
             "wc"    -> WCExecutor(curPath)
             "pwd"   -> PwdExecutor(curPath)
+            "exit"  -> Exit()
             else    -> ExternalExecutor(curPath, context, Paths.get(keyword))  // throw ParseException
         }
     }

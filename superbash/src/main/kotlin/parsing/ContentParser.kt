@@ -31,19 +31,16 @@ class ContentParser {
             isFirst -> {
                 isFirst = false
                 val firstEntity: CLIEntity = try {
-                    cliEntityCreator.createExit(word)
+                    cliEntityCreator.createKeyword(word, context)
                 } catch (_: ParseException) {
-                    try {
-                        cliEntityCreator.createKeyword(word, context)
-                    } catch (_: ParseException) {
-                        cliEntityCreator.createInitialization(word)
-                    }
+                    cliEntityCreator.createInitialization(word)
                 }
                 cliEntities.add(firstEntity)
             }
             word == ImportantChars.PIPE.toString() -> isFirst = true
             else -> cliEntities.add(cliEntityCreator.createArgument(word))
         }}
+
         return cliEntities
     }
 }
