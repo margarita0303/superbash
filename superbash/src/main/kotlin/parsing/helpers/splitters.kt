@@ -15,7 +15,7 @@ fun splitBySpaceAndPipe(input: String): List<String> {
         }
         ImportantChars.QUOTE_MARK_CHAR -> {
             marksStateHolder.quoteMark()
-             builder.append(ch)
+            builder.append(ch)
         }
         ImportantChars.SPACE -> {
             if (builder.isNotEmpty()) {
@@ -27,7 +27,9 @@ fun splitBySpaceAndPipe(input: String): List<String> {
         }
         ImportantChars.PIPE -> {
             if (marksStateHolder.isStandard) {
-                splitters.add(builder.toString())
+                if (builder.isNotEmpty()) {
+                    splitters.add(builder.toString())
+                }
                 splitters.add(ch.toString())
                 builder.clear()
             } else builder.append(ch)

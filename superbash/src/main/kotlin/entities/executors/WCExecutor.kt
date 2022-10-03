@@ -2,6 +2,7 @@ package entities.executors
 
 import entities.Argument
 import entities.Keyword
+import entities.PipeArgument
 import java.io.File
 import java.io.FileNotFoundException
 import java.lang.Exception
@@ -38,14 +39,17 @@ class WCExecutor(private val curPath: Path): Keyword {
      * @return statistics for every file
      */
     override fun execute(arguments: List<Argument>): Optional<String> {
-        if (arguments.isEmpty()) {
+        val updatedArguments = if (arguments.size > 1 && arguments.last() is PipeArgument) {
+            arguments.dropLast(1)
+        } else arguments
+        if (updatedArguments.isEmpty()) {
             return Optional.empty()
         }
 
         var output = ""
         val totalStatistics = Statistics()
 
-        for (argument in arguments) {
+        for (argument in updatedArguments) {
             try {
                 val file = getFile(argument.getArgument())
                 val fileStat = processFile(file)
@@ -56,7 +60,7 @@ class WCExecutor(private val curPath: Path): Keyword {
             }
         }
 
-        if (arguments.size > 1) output += "$totalStatistics total\n"
+        if (updatedArguments.size > 1) output += "$totalStatistics total\n"
 
         return Optional.of(output)
     }

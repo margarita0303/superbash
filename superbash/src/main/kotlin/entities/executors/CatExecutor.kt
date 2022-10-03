@@ -2,6 +2,7 @@ package entities.executors
 
 import entities.Argument
 import entities.Keyword
+import entities.PipeArgument
 import exceptions.RunException
 import java.io.FileNotFoundException
 import java.lang.Exception
@@ -22,13 +23,16 @@ class CatExecutor(private val curPath: Path): Keyword {
      * @return all files contents
      */
     override fun execute(arguments: List<Argument>): Optional<String> {
-        if (arguments.isEmpty()) {
+        val updatedArguments = if (arguments.size > 1 && arguments.last() is PipeArgument) {
+            arguments.dropLast(1)
+        } else arguments
+        if (updatedArguments.isEmpty()) {
             return Optional.empty()
         }
 
         var output = ""
 
-        for (argument in arguments) {
+        for (argument in updatedArguments) {
             output += tryRead(argument.getArgument())
         }
 

@@ -1,13 +1,9 @@
-import entities.Argument
-import entities.CLIEntity
-import entities.Initialization
-import entities.Keyword
+import entities.*
 import exceptions.Constants
 import parsing.ContentParser
 import parsing.VariablesSubstitutor
-import java.security.Key
-
 import java.util.*
+import kotlin.jvm.optionals.getOrDefault
 
 /**
  * Class to manage interaction with user
@@ -28,45 +24,36 @@ class CLIManager(startDirectory: String = "/") {
      * @param query from user
      * @return output for query and flag to handle `exit`
      */
+    @OptIn(ExperimentalStdlibApi::class)
     fun run(query: String): Optional<String> = try {
         val substitutedContent = substitutor.substitute(query, context)
         val parsedTokens = parser.parse(substitutedContent, context)
-        execute(parsedTokens)
+
+        var pipeArgument: PipeArgument? = null
+        val arguments = mutableListOf<Argument>()
+        var keyword: Keyword? = null
+        for (token in parsedTokens) {
+            when(token) {
+                is Initialization -> {
+                    context.variables[token.valueName] = token.value
+                    pipeArgument = PipeArgument("")
+                }
+                is Keyword -> {
+                    if (keyword != null) {
+                        pipeArgument?.run { arguments.add(this) }
+                        pipeArgument = PipeArgument(keyword.execute(arguments).getOrDefault(""))
+                        arguments.clear()
+                    }
+                    keyword = token
+                }
+                is Argument -> {
+                    arguments.add(token)
+                }
+            }
+        }
+        pipeArgument?.run { arguments.add(this) }
+        keyword?.execute(arguments) ?: Optional.empty()
     } catch (ex: Exception) {
         Optional.of((ex.message ?: Constants.UNKNOWN_ERROR) + '\n')
-    }
-
-    /**
-     * Method to handle parsed entities
-     * @param tokens List<CLIEntity> representing parsed command
-     * @return Optional<String> containing possible result of an execution
-     */
-    private fun execute(tokens: List<CLIEntity>): Optional<String> {
-        if (tokens.isEmpty()) {
-            return Optional.empty()
-        }
-
-        when {
-            tokens.first() is Keyword -> {
-                return executeKeyword(tokens)
-            }
-
-            tokens.first() is Initialization -> {
-                return executeInitialization(tokens)
-            }
-        }
-
-        return Optional.empty()
-    }
-
-    private fun executeKeyword(tokens: List<CLIEntity>): Optional<String> {
-        val firstToken = tokens.first() as Keyword
-        return firstToken.execute(tokens.drop(1).map { it as Argument })
-    }
-
-    private fun executeInitialization(tokens: List<CLIEntity>): Optional<String> {
-        val firstToken = tokens.first() as Initialization
-        context.variables[firstToken.valueName] = firstToken.value
-        return Optional.empty()
     }
 }
