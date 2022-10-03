@@ -170,7 +170,6 @@ class CLIManagerTest {
     @Test
     fun testPhase2_9() {
         val result = manager.run("cat $FILE2_TEST | cat $FILE1_TEST")
-        println("result ${result.get()}")
         Assert.assertEquals(FILE1_CONTENT, result.get())
     }
 
