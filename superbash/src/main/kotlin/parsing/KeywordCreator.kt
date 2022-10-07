@@ -22,8 +22,9 @@ class KeywordCreator {
             "echo"  -> EchoExecutor()
             "wc"    -> WCExecutor(curPath)
             "pwd"   -> PwdExecutor(curPath)
+            "grep"  -> GrepExecutor(curPath)
             "exit"  -> Exit()
-            else    -> ExternalExecutor(curPath, context, Paths.get(keyword))  // throw ParseException
+            else    -> ExternalExecutor(curPath, context, Paths.get(keyword))
         }
     }
 }
