@@ -20,7 +20,7 @@ class GrepExecutor(private val curPath: Path): Keyword {
      */
     override fun execute(arguments: List<Argument>): Optional<String> {
         val parser = ArgParser("superbash")
-        val regex by parser.argument(ArgType.String, description = "regex")
+        var regex by parser.argument(ArgType.String, description = "regex")
         val files by parser.argument(ArgType.String, description = "vararg files").vararg()
         val wordRegexp by parser.option(ArgType.Boolean, fullName = "word-regexp", shortName = "w", description = "The expression is searched for as a word.").default(false)
         val ignoreCase by parser.option(ArgType.Boolean, fullName = "ignore-case", shortName = "i", description = "Perform case insensitive matching. By default, grep is case sensitive.").default(false)
@@ -30,6 +30,9 @@ class GrepExecutor(private val curPath: Path): Keyword {
             files.dropLast(1)
         }
 
+        if (regex.isNotEmpty() && ((regex.first() == '"' && regex.last() == '"') || (regex.first() == '\'' && regex.last() == '\''))) {
+            regex = regex.substring(1, regex.length - 1)
+        }
         val grep = Grep(curPath=curPath, regex=regex, files=files, wordRegexp=wordRegexp, ignoreCase=ignoreCase, afterContext=afterContext)
         return grep.execute()
     }
@@ -66,7 +69,7 @@ class GrepExecutor(private val curPath: Path): Keyword {
                     length += line.length + 1
                     if (ind == indexesSize && needLines == 0)
                         break
-                    if (ind < indexesSize && indexes[ind] < length) {
+                    while (ind < indexesSize && indexes[ind] < length) {
                         needLines = afterContext + 1
                         ind++
                     }
