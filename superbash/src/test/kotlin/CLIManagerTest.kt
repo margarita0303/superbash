@@ -375,6 +375,36 @@ class CLIManagerTest {
         Assert.assertEquals(expected, result.get())
     }
 
+    @Test
+    fun testGrepWithWC() {
+        val result = manager.run("wc $FILE1_TEST $FILE2_TEST | grep total")
+        Assert.assertEquals(
+            "$TOTAL_LINES $TOTAL_WORDS $TOTAL_BYTES total\n",
+            result.get()
+        )
+    }
+
+    @Test
+    fun testGrepWithCat() {
+        val result1 = manager.run("cat $FILE1_TEST | grep mandelbrot")
+        val result2 = manager.run("grep mandelbrot $FILE1_TEST")
+
+        Assert.assertEquals(result1.get(), result2.get())
+    }
+
+    @Test
+    fun testGrepWithEcho() {
+        val result = manager.run("echo HELLO HI | grep HI")
+
+        Assert.assertEquals("HELLO HI\n", result.get())
+    }
+
+    @Test
+    fun testGrepWithBothArguments() {
+        val result = manager.run("echo amogus42 | grep '^amogus' $GREP_TEST")
+        val expected = "amogus\n"
+        Assert.assertEquals(expected, result.get())
+    }
 
     companion object {
         private val FILE1_TEST = Paths.get("src/test/resources/test_file1.txt").absolute().toFile()
