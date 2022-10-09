@@ -39,7 +39,7 @@ class GrepExecutor(private val curPath: Path): Keyword {
 
     internal class Grep(val curPath: Path, val regex: String, val files: List<String>, val wordRegexp: Boolean, val ignoreCase: Boolean, val afterContext: Int) {
         private fun createRegex(): Regex {
-            val regexOptions = mutableSetOf<RegexOption>()
+            val regexOptions = mutableSetOf(RegexOption.MULTILINE)
             var regexStr = regex
             if (wordRegexp) {
                 regexStr = "\\b${regexStr}\\b"
@@ -75,7 +75,12 @@ class GrepExecutor(private val curPath: Path): Keyword {
                     }
                     if (needLines != 0) {
                         builder.append(line)
-                        builder.append("\n")
+                        if (length != content.length) {
+                            builder.append("\n")
+                        }
+                        if (afterContext != 0 && needLines == 1) {
+                            builder.append("--\n")
+                        }
                         needLines--
                     }
                 }

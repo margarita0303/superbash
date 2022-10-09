@@ -273,7 +273,7 @@ class CLIManagerTest {
                 "        AmoguS\n" +
                 "            AmOgUs\n" +
                 "                AMOGUS\n" +
-                "aammoogguuss  amogusamogus"
+                "aammoogguuss  amogusamogus\n"
 
         Assert.assertEquals(expected, result.get())
     }
@@ -325,7 +325,10 @@ class CLIManagerTest {
     fun testGrepAmogusLimit() {
         val result = manager.run("grep amogus $GREP_TEST -A 0")
 
-        val expected = "amogus\n"
+        val expected = "amogus\n" +
+                "            __amogus__\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "     amogus)\n"
 
         Assert.assertEquals(expected, result.get())
     }
@@ -339,7 +342,18 @@ class CLIManagerTest {
                 "        AmoguS\n" +
                 "            AmOgUs\n" +
                 "                AMOGUS\n" +
-                "            __amogus__\n"
+                "            __amogus__\n" +
+                "        XX__AMOGUS__XX\n" +
+                "    -=AMoGUS=-\n" +
+                "AM0GUS\n" +
+                "\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "\n" +
+                "                                                                                A M O G U S\n" +
+                "                                                             am og us\n" +
+                "             (AMOGUS)\n" +
+                "     amogus)\n" +
+                "sus\n"
 
         Assert.assertEquals(expected, result.get())
     }
@@ -353,7 +367,10 @@ class CLIManagerTest {
                 "        AmoguS\n" +
                 "            AmOgUs\n" +
                 "                AMOGUS\n" +
-                "    -=AMoGUS=-\n"
+                "            __amogus__\n" +
+                "--\n" +
+                "     amogus)\n" +
+                "sus\n"
 
         Assert.assertEquals(expected, result.get())
     }
