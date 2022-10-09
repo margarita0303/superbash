@@ -284,7 +284,7 @@ class CLIManagerTest {
 
         val expected = "\n"
 
-        Assert.assertEquals(expected, result.get())
+        Assert.assertTrue(result.isEmpty)
     }
 
     @Test
@@ -322,10 +322,38 @@ class CLIManagerTest {
     }
 
     @Test
-    fun testGrepAmogusALetterWord() {
-        val result = manager.run("grep \"a\" $GREP_TEST -i -w")
+    fun testGrepAmogusLimit() {
+        val result = manager.run("grep amogus $GREP_TEST -A 0")
 
-        val expected = "                                                                                A M O G U S\n"
+        val expected = "amogus\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusWithCaseLimit() {
+        val result = manager.run("grep amogus $GREP_TEST -i -A 5")
+
+        val expected = "amogus\n" +
+                "    Amogus\n" +
+                "        AmoguS\n" +
+                "            AmOgUs\n" +
+                "                AMOGUS\n" +
+                "            __amogus__\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusWithWordAndCaseLimit() {
+        val result = manager.run("grep amogus $GREP_TEST -w -A 5")
+
+        val expected = "amogus\n" +
+                "    Amogus\n" +
+                "        AmoguS\n" +
+                "            AmOgUs\n" +
+                "                AMOGUS\n" +
+                "    -=AMoGUS=-\n"
 
         Assert.assertEquals(expected, result.get())
     }
