@@ -283,7 +283,7 @@ class CLIManagerTest {
         val result = manager.run("grep \"amo\" $GREP_TEST -w")
 
         val expected = "\n"
-
+        println(result)
         Assert.assertTrue(result.isEmpty)
     }
 
