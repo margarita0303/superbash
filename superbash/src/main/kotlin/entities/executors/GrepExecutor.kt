@@ -29,15 +29,18 @@ class GrepExecutor(private val curPath: Path): Keyword {
         if (files.size > 1 && arguments.last() is PipeArgument) {
             files.dropLast(1)
         }
+        val fileContent = if (files.size == 1 && arguments.last() is PipeArgument) {
+            arguments.last().getArgument()
+        } else { null }
 
         if (regex.isNotEmpty() && ((regex.first() == '"' && regex.last() == '"') || (regex.first() == '\'' && regex.last() == '\''))) {
             regex = regex.substring(1, regex.length - 1)
         }
-        val grep = Grep(curPath=curPath, regex=regex, files=files, wordRegexp=wordRegexp, ignoreCase=ignoreCase, afterContext=afterContext)
+        val grep = Grep(curPath=curPath, regex=regex, files=files, fileContent=fileContent, wordRegexp=wordRegexp, ignoreCase=ignoreCase, afterContext=afterContext)
         return grep.execute()
     }
 
-    internal class Grep(val curPath: Path, val regex: String, val files: List<String>, val wordRegexp: Boolean, val ignoreCase: Boolean, val afterContext: Int) {
+    internal class Grep(val curPath: Path, val regex: String, val files: List<String>, val fileContent: String?, val wordRegexp: Boolean, val ignoreCase: Boolean, val afterContext: Int) {
         private fun createRegex(): Regex {
             val regexOptions = mutableSetOf(RegexOption.MULTILINE)
             var regexStr = regex
@@ -50,17 +53,12 @@ class GrepExecutor(private val curPath: Path): Keyword {
             return Regex(regexStr, regexOptions)
         }
 
-        fun execute(): Optional<String> {
-            val builder = StringBuilder()
-            val regex = createRegex()
-            files.forEach { file ->
-                val indexes = mutableListOf<Int>()
-                val content = tryRead(curPath, file, "grep")
-                regex.findAll(content).toMutableList().forEach { match ->
-                    indexes.add(match.range.first)
-                }
-                if (indexes.isEmpty()) return Optional.empty()
-
+        private fun executeContent(content: String, regex: Regex, builder: StringBuilder) {
+            val indexes = mutableListOf<Int>()
+            regex.findAll(content).toMutableList().forEach { match ->
+                indexes.add(match.range.first)
+            }
+            if (indexes.isNotEmpty()) {
                 val indexesSize = indexes.size
                 var length = 0
                 var ind = 0
@@ -85,7 +83,26 @@ class GrepExecutor(private val curPath: Path): Keyword {
                     }
                 }
             }
-            return Optional.of(builder.toString())
+        }
+
+        fun execute(): Optional<String> {
+            assert(files.isEmpty() || fileContent == null) { "one of (\"files\", \"fileContent\") should be empty" }
+            val builder = StringBuilder()
+            val regex = createRegex()
+            files.forEach { file ->
+                val content = tryRead(curPath, file, "grep")
+                executeContent(content, regex, builder)
+            }
+            fileContent?.run {
+                val content = tryRead(curPath, this, "grep")
+                executeContent(content, regex, builder)
+            }
+
+            return if (builder.isEmpty()) {
+                Optional.empty<String>()
+            } else {
+                Optional.of(builder.toString())
+            }
         }
     }
 }
