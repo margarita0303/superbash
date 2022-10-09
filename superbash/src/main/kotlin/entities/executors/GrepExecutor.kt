@@ -3,13 +3,10 @@ package entities.executors
 import entities.Argument
 import entities.Keyword
 import entities.PipeArgument
+import entities.executors.utils.tryRead
 import java.nio.file.Path
 import java.util.*
 import kotlinx.cli.*
-import java.io.FileNotFoundException
-import java.lang.Exception
-import java.nio.file.Paths
-import kotlin.io.path.name
 
 /**
  * Class for `grep` execution
@@ -25,9 +22,9 @@ class GrepExecutor(private val curPath: Path): Keyword {
         val parser = ArgParser("superbash")
         val regex by parser.argument(ArgType.String, description = "regex")
         val files by parser.argument(ArgType.String, description = "vararg files").vararg()
-        val wordRegexp by parser.option(ArgType.Boolean, fullName = "word-regexp", shortName = "w", description = "The expression is searched for as a word (as if surrounded by ‘[[:<:]]’ and ‘[[:>:]]’; see re_format(7)).  This option has no effect if -x is also specified.").default(false)
-        val ignoreCase by parser.option(ArgType.Boolean, fullName = "ignore-case", shortName = "i", description = "Perform case insensitive matching.  By default, grep is case sensitive.").default(false)
-        val afterContext by parser.option(ArgType.Int, fullName = "after-context", shortName = "A", description = "Print num lines of trailing context after each match.  See also the -B and -C options.").default(0)
+        val wordRegexp by parser.option(ArgType.Boolean, fullName = "word-regexp", shortName = "w", description = "The expression is searched for as a word.").default(false)
+        val ignoreCase by parser.option(ArgType.Boolean, fullName = "ignore-case", shortName = "i", description = "Perform case insensitive matching. By default, grep is case sensitive.").default(false)
+        val afterContext by parser.option(ArgType.Int, fullName = "after-context", shortName = "A", description = "Print num lines of trailing context after each match.").default(0)
         parser.parse(arguments.map { it.getArgument() }.toTypedArray())
         if (files.size > 1 && arguments.last() is PipeArgument) {
             files.dropLast(1)
@@ -38,8 +35,16 @@ class GrepExecutor(private val curPath: Path): Keyword {
     }
 
     internal class Grep(val curPath: Path, val regex: String, val files: List<String>, val wordRegexp: Boolean, val ignoreCase: Boolean, val afterContext: Int) {
-        private fun createRegex(): Regex {  // TODO
-            return regex.toRegex()
+        private fun createRegex(): Regex {
+            val regexOptions = mutableSetOf<RegexOption>()
+            var regexStr = regex
+            if (wordRegexp) {
+                regexStr = "\\b${regexStr}\\b"
+            }
+            if (ignoreCase) {
+                regexOptions.add(RegexOption.IGNORE_CASE)
+            }
+            return Regex(regexStr, regexOptions)
         }
 
         fun execute(): Optional<String> {
@@ -47,7 +52,7 @@ class GrepExecutor(private val curPath: Path): Keyword {
             val regex = createRegex()
             files.forEach { file ->
                 val indexes = mutableListOf<Int>()
-                val content = tryRead(file)
+                val content = tryRead(curPath, file, "grep")
                 regex.findAll(content).toMutableList().forEach { match ->
                     indexes.add(match.range.first)
                 }
@@ -73,40 +78,6 @@ class GrepExecutor(private val curPath: Path): Keyword {
                 }
             }
             return Optional.of(builder.toString())
-        }
-
-        // FIXME(cat copy-paste below)
-
-        /**
-         * Method to read a file
-         * @param relPath stores path to file
-         * @return file content
-         */
-        private fun tryRead(relPath: String): String {
-            return try {
-                val file = if (isAbsolute(relPath)) {
-                    Paths.get(relPath).toFile()
-                } else {
-                    Paths.get(curPath.name + relPath).toFile()
-                }
-                file.readText()
-            } catch (e: FileNotFoundException) {
-                "grep: ${relPath}: No such file or directory\n"
-            }
-        }
-
-        /**
-         * Method to check is path is absolute
-         * @param path stores path to file
-         * @return true if path exists and it is absolute
-         */
-        private fun isAbsolute(path: String): Boolean {
-            return try {
-                val pathCheck = Paths.get(path)
-                pathCheck.isAbsolute
-            } catch (e: Exception) {
-                false
-            }
         }
     }
 }
