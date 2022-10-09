@@ -185,6 +185,152 @@ class CLIManagerTest {
         Assert.assertEquals("$FILE1_LINES $FILE1_WORDS $FILE1_BYTES test_file1.txt\n", result.get())
     }
 
+
+    @Test
+    fun testGrepSimpleAmogus() {
+        val result = manager.run("grep amogus $GREP_TEST")
+
+        val expected = "amogus\n" +
+                "            __amogus__\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "     amogus)\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusWithQuotes() {
+        val result = manager.run("grep \"amogus\" $GREP_TEST")
+
+        val expected = "amogus\n" +
+                "            __amogus__\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "     amogus)\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusOnlyWord() {
+        val result = manager.run("grep amogus $GREP_TEST -w")
+
+        val expected = "amogus\n" +
+                "     amogus)\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusCase() {
+        val result = manager.run("grep amogus $GREP_TEST -i")
+
+        val expected = "amogus\n" +
+                "    Amogus\n" +
+                "        AmoguS\n" +
+                "            AmOgUs\n" +
+                "                AMOGUS\n" +
+                "            __amogus__\n" +
+                "        XX__AMOGUS__XX\n" +
+                "    -=AMoGUS=-\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "             (AMOGUS)\n" +
+                "     amogus)\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusCaseAndWord() {
+        val result = manager.run("grep amogus $GREP_TEST -i -w")
+
+        val expected = "amogus\n" +
+                "    Amogus\n" +
+                "        AmoguS\n" +
+                "            AmOgUs\n" +
+                "                AMOGUS\n" +
+                "    -=AMoGUS=-\n" +
+                "             (AMOGUS)\n" +
+                "     amogus)\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusRegexAndCase1() {
+        val result = manager.run("grep \"^amogus\" $GREP_TEST -i")
+
+        val expected = "amogus\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusRegexAndCase2() {
+        val result = manager.run("grep \"amogus$\" $GREP_TEST -i")
+
+        val expected = "amogus\n" +
+                "    Amogus\n" +
+                "        AmoguS\n" +
+                "            AmOgUs\n" +
+                "                AMOGUS\n" +
+                "aammoogguuss  amogusamogus"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusFalseWord() {
+        val result = manager.run("grep \"amo\" $GREP_TEST -w")
+
+        val expected = "\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusTrueWithoutWord() {
+        val result = manager.run("grep \"amo\" $GREP_TEST")
+
+        val expected = "amogus\n" +
+                "            __amogus__\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "     amogus)\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusAllALetter() {
+        val result = manager.run("grep \"a\" $GREP_TEST -i")
+
+        val expected = "amogus\n" +
+                "    Amogus\n" +
+                "        AmoguS\n" +
+                "            AmOgUs\n" +
+                "                AMOGUS\n" +
+                "            __amogus__\n" +
+                "        XX__AMOGUS__XX\n" +
+                "    -=AMoGUS=-\n" +
+                "AM0GUS\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "                                                                                A M O G U S\n" +
+                "                                                             am og us\n" +
+                "             (AMOGUS)\n" +
+                "     amogus)\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepAmogusALetterWord() {
+        val result = manager.run("grep \"a\" $GREP_TEST -i -w")
+
+        val expected = "                                                                                A M O G U S\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+
     companion object {
         private val FILE1_TEST = Paths.get("src/test/resources/test_file1.txt").absolute().toFile()
         private val FILE1_CONTENT = FILE1_TEST.readText()
@@ -201,5 +347,7 @@ class CLIManagerTest {
         private val TOTAL_WORDS = FILE1_WORDS + FILE2_WORDS
         private val TOTAL_LINES = FILE1_LINES + FILE2_LINES
         private val TOTAL_BYTES = FILE1_BYTES + FILE2_BYTES
+
+        private val GREP_TEST = Paths.get("src/test/resources/grep_test.txt").absolute().toFile()
     }
 }
