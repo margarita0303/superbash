@@ -29,14 +29,17 @@ class GrepExecutor(private val curPath: Path): Keyword {
         if (files.size > 1 && arguments.last() is PipeArgument) {
             files.dropLast(1)
         }
+        val filesUpdated = files.toMutableList()
         val fileContent = if (files.size == 1 && arguments.last() is PipeArgument) {
-            arguments.last().getArgument()
+            val lastArgument = arguments.last().getArgument()
+            filesUpdated.clear()
+            lastArgument
         } else { null }
 
         if (regex.isNotEmpty() && ((regex.first() == '"' && regex.last() == '"') || (regex.first() == '\'' && regex.last() == '\''))) {
             regex = regex.substring(1, regex.length - 1)
         }
-        val grep = Grep(curPath=curPath, regex=regex, files=files, fileContent=fileContent, wordRegexp=wordRegexp, ignoreCase=ignoreCase, afterContext=afterContext)
+        val grep = Grep(curPath=curPath, regex=regex, files=filesUpdated, fileContent=fileContent, wordRegexp=wordRegexp, ignoreCase=ignoreCase, afterContext=afterContext)
         return grep.execute()
     }
 
@@ -73,10 +76,10 @@ class GrepExecutor(private val curPath: Path): Keyword {
                     }
                     if (needLines != 0) {
                         builder.append(line)
-                        if (length != content.length) {
+                        if (afterContext == 0 || length != content.length) {
                             builder.append("\n")
                         }
-                        if (afterContext != 0 && needLines == 1) {
+                        if (afterContext != 0 && needLines == 1 && ind != indexesSize) {
                             builder.append("--\n")
                         }
                         needLines--
@@ -94,8 +97,7 @@ class GrepExecutor(private val curPath: Path): Keyword {
                 executeContent(content, regex, builder)
             }
             fileContent?.run {
-                val content = tryRead(curPath, this, "grep")
-                executeContent(content, regex, builder)
+                executeContent("$this\n", regex, builder)
             }
 
             return if (builder.isEmpty()) {

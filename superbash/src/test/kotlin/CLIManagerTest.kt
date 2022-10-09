@@ -376,6 +376,20 @@ class CLIManagerTest {
     }
 
     @Test
+    fun testGrepAmogusWithWordAndCaseLimitNotEnd() {
+        val result = manager.run("grep AmoguS $GREP_TEST -w -A 5")
+
+        val expected = "        AmoguS\n" +
+                "            AmOgUs\n" +
+                "                AMOGUS\n" +
+                "            __amogus__\n" +
+                "        XX__AMOGUS__XX\n" +
+                "    -=AMoGUS=-\n"
+
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
     fun testGrepWithWC() {
         val result = manager.run("wc $FILE1_TEST $FILE2_TEST | grep total")
         Assert.assertEquals(
@@ -390,13 +404,6 @@ class CLIManagerTest {
         val result2 = manager.run("grep mandelbrot $FILE1_TEST")
 
         Assert.assertEquals(result1.get(), result2.get())
-    }
-
-    @Test
-    fun testGrepWithEcho() {
-        val result = manager.run("echo HELLO HI | grep HI")
-
-        Assert.assertEquals("HELLO HI\n", result.get())
     }
 
     @Test
