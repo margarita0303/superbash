@@ -3,12 +3,12 @@ package entities.executors
 import Context
 import entities.Argument
 import entities.Keyword
+import entities.executors.utils.FileSystemHelper
 import exceptions.ParseException
-import exceptions.RunException
+import java.lang.Exception
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
-import kotlin.io.path.exists
 import kotlin.io.path.name
 
 /**
@@ -17,11 +17,12 @@ import kotlin.io.path.name
  * @param context stores context from CLIManager
  * @param relBinaryPath stores path to binary to execute (maybe relative)
  */
-class ExternalExecutor(private val curPath: Path, private val context: Context, private val relBinaryPath: Path): Keyword {
+class ExternalExecutor(curPath: Path, private val context: Context, private val relBinaryPath: Path): Keyword {
     /**
      * Absolute path to binary got from `PATH` variable or checked relative path
      */
-    private val binaryPath = getBinaryPath() ?: throw ParseException("No such binary: ${relBinaryPath.name}")
+    private val fileSystemHelper = FileSystemHelper(curPath)
+    private val binaryPath = getBinaryPath()
 
     /**
      * Method to execute external binary
@@ -30,7 +31,7 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
      */
     override fun execute(arguments: List<Argument>): Optional<String> {
         val process = ProcessBuilder(binaryPath.name, *arguments.map { it.getArgument() }.toTypedArray())
-            .directory(curPath.toFile())
+            .directory(fileSystemHelper.curPath.toFile())
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
             .redirectError(ProcessBuilder.Redirect.PIPE)
             .start()
@@ -45,11 +46,14 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
      * Method to get binary path from `PATH` or from relative path
      * @return path or null
      */
-    private fun getBinaryPath() : Path? {
+    private fun getBinaryPath() : Path {
         tryGetInPathVariable()?.let { return it }
-        tryGetRelative()?.let { return it }
 
-        return null
+        return try {
+            fileSystemHelper.tryGetPath(relBinaryPath.toString())
+        } catch (e: Exception) {
+            throw ParseException("No such binary: ${relBinaryPath.name}")
+        }
     }
 
     /**
@@ -66,24 +70,8 @@ class ExternalExecutor(private val curPath: Path, private val context: Context, 
                 for (file in files) {
                     if (file.name.equals(relBinaryPath.name)) return file.toPath()
                 }
-
             }
         }
-
-        return null
-    }
-
-    /**
-     * Method to find binary using relative path
-     * @return path or null
-     */
-    private fun tryGetRelative() : Path? {
-        val path = if (relBinaryPath.isAbsolute) {
-            relBinaryPath
-        } else {
-            Paths.get(curPath.toString() + relBinaryPath.toString())
-        }
-        if (path.exists()) return path
 
         return null
     }
