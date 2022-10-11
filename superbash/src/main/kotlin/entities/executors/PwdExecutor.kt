@@ -16,5 +16,5 @@ class PwdExecutor(private val curPath: Path): Keyword {
      * @param arguments (ignored since pwd does not require any arguments)
      * @return current path String
      */
-    override fun execute(arguments: List<Argument>): Optional<String> = Optional.of(curPath.toString())
+    override fun execute(arguments: List<Argument>): Optional<String> = Optional.of(curPath.toString() + "\n")
 }

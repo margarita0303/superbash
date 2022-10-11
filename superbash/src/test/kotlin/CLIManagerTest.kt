@@ -44,19 +44,19 @@ class CLIManagerTest {
     @Test
     fun testPwd() {
         val result = manager.run("pwd")
-        Assert.assertEquals(testDir, result.get())
+        Assert.assertEquals(testDir + "\n", result.get())
     }
 
     @Test
     fun testPwdOneArgument() {
         val result = manager.run("pwd 1")
-        Assert.assertEquals(testDir, result.get())
+        Assert.assertEquals(testDir + "\n", result.get())
     }
 
     @Test
     fun testPwdThreeArguments() {
         val result = manager.run("pwd 1 2 3")
-        Assert.assertEquals(testDir, result.get())
+        Assert.assertEquals(testDir + "\n", result.get())
     }
 
     @Test
@@ -152,19 +152,19 @@ class CLIManagerTest {
     @Test
     fun testPhase2_6() {
         val result = manager.run("echo 2 | pwd")
-        Assert.assertEquals(testDir, result.get())
+        Assert.assertEquals(testDir + "\n", result.get())
     }
 
     @Test
     fun testPhase2_7() {
         val result = manager.run("pwd | pwd")
-        Assert.assertEquals(testDir, result.get())
+        Assert.assertEquals(testDir + "\n", result.get())
     }
 
     @Test
     fun testPhase2_8() {
         val result = manager.run("pwd | pwd")
-        Assert.assertEquals(testDir, result.get())
+        Assert.assertEquals(testDir + "\n", result.get())
     }
 
     @Test
@@ -407,9 +407,19 @@ class CLIManagerTest {
     }
 
     @Test
-    fun testGrepWithBothArguments() {
+    fun testGrepWithBothArguments1() {
         val result = manager.run("echo amogus42 | grep '^amogus' $GREP_TEST")
         val expected = "amogus\n"
+        Assert.assertEquals(expected, result.get())
+    }
+
+    @Test
+    fun testGrepWithBothArguments2() {
+        val result = manager.run("echo amogus42 | grep 'amogus' $GREP_TEST")
+        val expected = "amogus\n" +
+                "            __amogus__\n" +
+                "aammoogguuss  amogusamogus\n" +
+                "     amogus)\n"
         Assert.assertEquals(expected, result.get())
     }
 

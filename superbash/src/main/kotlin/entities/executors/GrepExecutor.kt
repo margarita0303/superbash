@@ -3,16 +3,18 @@ package entities.executors
 import entities.Argument
 import entities.Keyword
 import entities.PipeArgument
-import entities.executors.utils.tryRead
+import entities.executors.utils.FileSystemHelper
 import java.nio.file.Path
 import java.util.*
 import kotlinx.cli.*
+import java.lang.Exception
 
 /**
  * Class for `grep` execution
  * @param curPath stores current path from context
  */
-class GrepExecutor(private val curPath: Path): Keyword {
+class GrepExecutor(curPath: Path): Keyword {
+    private val fileSystemHelper = FileSystemHelper(curPath)
     /**
      * Method to get current path (execute `grep`)
      * @param arguments (all arguments to grep)
@@ -26,10 +28,10 @@ class GrepExecutor(private val curPath: Path): Keyword {
         val ignoreCase by parser.option(ArgType.Boolean, fullName = "ignore-case", shortName = "i", description = "Perform case insensitive matching. By default, grep is case sensitive.").default(false)
         val afterContext by parser.option(ArgType.Int, fullName = "after-context", shortName = "A", description = "Print num lines of trailing context after each match.").default(0)
         parser.parse(arguments.map { it.getArgument() }.toTypedArray())
-        if (files.size > 1 && arguments.last() is PipeArgument) {
-            files.dropLast(1)
-        }
         val filesUpdated = files.toMutableList()
+        if (filesUpdated.size > 1 && arguments.last() is PipeArgument) {
+            filesUpdated.removeLast()
+        }
         val fileContent = if (files.size == 1 && arguments.last() is PipeArgument) {
             val lastArgument = arguments.last().getArgument()
             filesUpdated.clear()
@@ -39,11 +41,11 @@ class GrepExecutor(private val curPath: Path): Keyword {
         if (regex.isNotEmpty() && ((regex.first() == '"' && regex.last() == '"') || (regex.first() == '\'' && regex.last() == '\''))) {
             regex = regex.substring(1, regex.length - 1)
         }
-        val grep = Grep(curPath=curPath, regex=regex, files=filesUpdated, fileContent=fileContent, wordRegexp=wordRegexp, ignoreCase=ignoreCase, afterContext=afterContext)
+        val grep = Grep(fileSystemHelper=fileSystemHelper, regex=regex, files=filesUpdated, fileContent=fileContent, wordRegexp=wordRegexp, ignoreCase=ignoreCase, afterContext=afterContext)
         return grep.execute()
     }
 
-    internal class Grep(val curPath: Path, val regex: String, val files: List<String>, val fileContent: String?, val wordRegexp: Boolean, val ignoreCase: Boolean, val afterContext: Int) {
+    internal class Grep(val fileSystemHelper: FileSystemHelper, val regex: String, val files: List<String>, val fileContent: String?, val wordRegexp: Boolean, val ignoreCase: Boolean, val afterContext: Int) {
         private fun createRegex(): Regex {
             val regexOptions = mutableSetOf(RegexOption.MULTILINE)
             var regexStr = regex
@@ -93,7 +95,11 @@ class GrepExecutor(private val curPath: Path): Keyword {
             val builder = StringBuilder()
             val regex = createRegex()
             files.forEach { file ->
-                val content = tryRead(curPath, file, "grep")
+                val content = try {
+                    fileSystemHelper.tryGetFile(file).readText()
+                } catch (e: Exception) {
+                    "grep: $file: No such file"
+                }
                 executeContent(content, regex, builder)
             }
             fileContent?.run {

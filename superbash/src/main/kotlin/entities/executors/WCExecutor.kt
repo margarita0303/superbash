@@ -3,19 +3,17 @@ package entities.executors
 import entities.Argument
 import entities.Keyword
 import entities.PipeArgument
-import java.io.File
+import entities.executors.utils.FileSystemHelper
 import java.io.FileNotFoundException
-import java.lang.Exception
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
-import kotlin.io.path.name
 
 /**
  * Class for `wc` execution
  * @param curPath stores current path from context
  */
-class WCExecutor(private val curPath: Path): Keyword {
+class WCExecutor(curPath: Path): Keyword {
+    private val fileSystemHelper = FileSystemHelper(curPath)
     /**
      * Class that stores statistics of files (lines, words and bytes)
      * @param lines is count of lines in file
@@ -55,9 +53,9 @@ class WCExecutor(private val curPath: Path): Keyword {
 
         for (argument in updatedArguments) {
             try {
-                val file = getFile(argument.getArgument())
+                val file = fileSystemHelper.tryGetFile(argument.getArgument())
                 val fileStat = processText(file.readText())
-                output += fileStat.toString() + " " + Paths.get(curPath.toString() + argument.getArgument()).fileName + "\n"
+                output += fileStat.toString() + " " + file.name + "\n"
                 totalStatistics += fileStat
             } catch (e: FileNotFoundException) {
                 output += "wc: ${argument.getArgument()}: No such file or directory\n"
@@ -76,32 +74,5 @@ class WCExecutor(private val curPath: Path): Keyword {
      */
     private fun processText(content: String): Statistics {
         return Statistics(content.count { it == '\n' }, content.split(' ').size, content.toByteArray().size)
-    }
-
-    /**
-     * Method to check is path is absolute
-     * @param path stores path to file
-     * @return true if path exists and it is absolute
-     */
-    private fun isAbsolute(path: String): Boolean {
-        return try {
-            val pathCheck = Paths.get(path)
-            pathCheck.isAbsolute
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    /**
-     * Method to get a file class based on curPath and path
-     * @param path to a file
-     * @return File based on configuration
-     */
-    private fun getFile(path: String): File {
-        return if (isAbsolute(path)) {
-            Paths.get(path).toFile()
-        } else {
-            Paths.get(curPath.name + path).toFile()
-        }
     }
 }

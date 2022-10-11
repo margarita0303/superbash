@@ -3,7 +3,8 @@ package entities.executors
 import entities.Argument
 import entities.Keyword
 import entities.PipeArgument
-import entities.executors.utils.tryRead
+import entities.executors.utils.FileSystemHelper
+import java.lang.Exception
 import java.nio.file.Path
 import java.util.*
 
@@ -11,7 +12,9 @@ import java.util.*
  * Class to execute `cat` command
  * @param curPath stores current path from context
  */
-class CatExecutor(private val curPath: Path): Keyword {
+class CatExecutor(curPath: Path): Keyword {
+    private val fileSystemHelper = FileSystemHelper(curPath)
+
     /**
      * Method to execute `cat`
      * @param arguments stores files to cat
@@ -27,7 +30,11 @@ class CatExecutor(private val curPath: Path): Keyword {
 
         var output = ""
         for (argument in updatedArguments) {
-            output += tryRead(curPath, argument.getArgument(), "cat")
+            output += try {
+                fileSystemHelper.tryGetFile(argument.getArgument()).readText()
+            } catch (e: Exception) {
+                "cat: ${argument.getArgument()}: No such file or directory\n"
+            }
         }
         return Optional.of(output)
     }

@@ -17,14 +17,14 @@ class PwdExecutorTest {
     fun testPwdIfNoVariables() {
         val emptyArgs = listOf<Argument>()
         val result = pwdExecutor.execute(emptyArgs)
-        Assert.assertEquals(CUR_PATH_STRING, result.get())
+        Assert.assertEquals(CUR_PATH_STRING + "\n", result.get())
     }
 
     @Test
     fun testPwdIfManyVariable() {
         val args = listOf<Argument>(CLIArgument("1"), CLIArgument("2"))
         val result = pwdExecutor.execute(args)
-        Assert.assertEquals(result.get(), CUR_PATH_STRING)
+        Assert.assertEquals(CUR_PATH_STRING + "\n", result.get())
     }
 
     companion object {
