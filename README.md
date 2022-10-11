@@ -4,7 +4,7 @@
 
 Команда для запуска: `java -jar superbash.jar`
 
-Собранный `.jar` файл с реализацией CLI можно найти по ссылке: *[тык](https://github.com/bashenjoyers/superbash/blob/phase2/build/superbash.jar)*
+Собранный `.jar` файл с реализацией CLI можно найти по ссылке: *[тык](https://github.com/bashenjoyers/superbash/blob/grep/build/superbash.jar)*
 
 Также `.jar` файл можно собрать самому, склонировав репозиторий и запустив команду `./gradlew build`. После этого собранная версия будет доступна в папке `build/libs`.
 
