@@ -28,10 +28,10 @@ class GrepExecutor(curPath: Path): Keyword {
         val ignoreCase by parser.option(ArgType.Boolean, fullName = "ignore-case", shortName = "i", description = "Perform case insensitive matching. By default, grep is case sensitive.").default(false)
         val afterContext by parser.option(ArgType.Int, fullName = "after-context", shortName = "A", description = "Print num lines of trailing context after each match.").default(0)
         parser.parse(arguments.map { it.getArgument() }.toTypedArray())
-        if (files.size > 1 && arguments.last() is PipeArgument) {
-            files.dropLast(1)
-        }
         val filesUpdated = files.toMutableList()
+        if (filesUpdated.size > 1 && arguments.last() is PipeArgument) {
+            filesUpdated.removeLast()
+        }
         val fileContent = if (files.size == 1 && arguments.last() is PipeArgument) {
             val lastArgument = arguments.last().getArgument()
             filesUpdated.clear()
