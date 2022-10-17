@@ -1,5 +1,6 @@
 package entities.executors
 
+import Context
 import entities.Argument
 import entities.CLIArgument
 import org.junit.Assert
@@ -15,6 +16,8 @@ import java.util.Optional
 class LsExecutorTest {
     private val curPath = Paths.get(File("").absolutePath)
     private val lsExecutor = LsExecutor(curPath)
+    private val context = Context()
+
 
     @Test
     fun testLs1() {
@@ -31,7 +34,7 @@ class LsExecutorTest {
                     "settings.gradle\n" +
                     "src"
         )
-        val result = lsExecutor.execute(listOf(CLIArgument("")))
+        val result = lsExecutor.execute(listOf(CLIArgument("")), context)
         Assertions.assertEquals(expected, result)
     }
 
@@ -41,7 +44,7 @@ class LsExecutorTest {
             "main\n" +
                     "test"
         )
-        val result = lsExecutor.execute(listOf(CLIArgument("src")))
+        val result = lsExecutor.execute(listOf(CLIArgument("src")), context)
         Assertions.assertEquals(expected, result)
     }
 

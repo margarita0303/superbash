@@ -25,6 +25,7 @@ class KeywordCreator {
             "grep"  -> GrepExecutor(curPath)
             "exit"  -> Exit()
             "ls" -> LsExecutor(curPath)
+            "cd" -> CdExecutor()
             else    -> ExternalExecutor(curPath, context, Paths.get(keyword))
         }
     }
