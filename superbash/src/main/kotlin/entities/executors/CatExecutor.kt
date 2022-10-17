@@ -23,7 +23,6 @@ class CatExecutor(val curPath: Path): Keyword {
      * @return all files contents
      */
     override fun execute(arguments: List<Argument>, context: Context): Optional<String> {
-        println(curPath.name)
         val updatedArguments = if (arguments.size > 1 && arguments.last() is PipeArgument) {
             arguments.dropLast(1)
         } else arguments
